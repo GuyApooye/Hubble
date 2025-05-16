@@ -1,4 +1,4 @@
 {
-  "vertex": "hubble:space/rendertype/rendertype_planet",
-  "fragment": "hubble:space/rendertype/rendertype_planet"
+  "vertex": "hubble:rendertype/rendertype_planet",
+  "fragment": "hubble:rendertype/rendertype_planet"
 }

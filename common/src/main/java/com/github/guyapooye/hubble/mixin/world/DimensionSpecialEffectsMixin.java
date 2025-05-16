@@ -1,7 +1,7 @@
-package com.github.guyapooye.hubble.mixin.registry;
+package com.github.guyapooye.hubble.mixin.world;
 
 import com.github.guyapooye.hubble.Hubble;
-import com.github.guyapooye.hubble.client.renderer.world.SpaceEffects;
+import com.github.guyapooye.hubble.client.world.SpaceEffects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;

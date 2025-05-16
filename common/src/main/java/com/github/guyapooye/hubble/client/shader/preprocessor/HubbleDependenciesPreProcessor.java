@@ -1,10 +1,7 @@
-package com.github.guyapooye.hubble.impl.client.shader.preprocessor;
+package com.github.guyapooye.hubble.client.shader.preprocessor;
 
-import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.shader.processor.ShaderBufferProcessor;
 import foundry.veil.api.client.render.shader.processor.ShaderPreProcessor;
 import io.github.ocelot.glslprocessor.api.GlslSyntaxException;
-import io.github.ocelot.glslprocessor.api.node.GlslNodeList;
 import io.github.ocelot.glslprocessor.api.node.GlslTree;
 import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 

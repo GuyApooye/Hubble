@@ -1,0 +1,12 @@
+{
+  "type": "hubble:space",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "hubble:space",
+      "layers": [
+      ],
+      "structure_overrides": []
+    }
+  }
+}

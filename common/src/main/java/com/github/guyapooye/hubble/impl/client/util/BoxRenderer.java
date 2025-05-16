@@ -1,11 +1,9 @@
-package com.github.guyapooye.hubble.client.util;
+package com.github.guyapooye.hubble.impl.client.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import foundry.veil.api.client.color.Color;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 public final class BoxRenderer {
     public final static int[] BOX_X = {-1, +1, +1, -1, -1, +1, +1, -1, -1, -1, -1, -1, +1, +1, +1, +1, +1, +1, -1, -1, -1, -1, +1, +1};

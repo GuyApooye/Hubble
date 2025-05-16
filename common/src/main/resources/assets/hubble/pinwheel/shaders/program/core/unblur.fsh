@@ -5,7 +5,7 @@ in vec2 texCoord;
 
 out vec4 fragColor;
 
-const float offset = 3;
+const float offset = 1;
 
 void main() {
     vec2 halfpixel = 0.5 / OutSize;
@@ -18,5 +18,14 @@ void main() {
     sum += texture(DiffuseSampler0, texCoord + vec2(halfpixel.x, -halfpixel.y) * offset) * 2.0;
     sum += texture(DiffuseSampler0, texCoord + vec2(0.0, -halfpixel.y * 2.0) * offset);
     sum += texture(DiffuseSampler0, texCoord + vec2(-halfpixel.x, -halfpixel.y) * offset) * 2.0;
-    fragColor = sum / 12.0;
+
+    sum += texture(DiffuseSampler0, texCoord - vec2(-halfpixel.x * 2.0, 0.0) * offset);
+    sum += texture(DiffuseSampler0, texCoord - vec2(-halfpixel.x, halfpixel.y) * offset) * 2.0;
+    sum += texture(DiffuseSampler0, texCoord - vec2(0.0, halfpixel.y * 2.0) * offset);
+    sum += texture(DiffuseSampler0, texCoord - vec2(halfpixel.x, halfpixel.y) * offset) * 2.0;
+    sum += texture(DiffuseSampler0, texCoord - vec2(halfpixel.x * 2.0, 0.0) * offset);
+    sum += texture(DiffuseSampler0, texCoord - vec2(halfpixel.x, -halfpixel.y) * offset) * 2.0;
+    sum += texture(DiffuseSampler0, texCoord - vec2(0.0, -halfpixel.y * 2.0) * offset);
+    sum += texture(DiffuseSampler0, texCoord - vec2(-halfpixel.x, -halfpixel.y) * offset) * 2.0;
+    fragColor = sum / 24.0;
 }

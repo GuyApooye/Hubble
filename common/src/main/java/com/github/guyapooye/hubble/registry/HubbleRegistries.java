@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.space;
+package com.github.guyapooye.hubble.registry;
 
-public class CelestialObjectRegistry {
+public class HubbleRegistries {
 }

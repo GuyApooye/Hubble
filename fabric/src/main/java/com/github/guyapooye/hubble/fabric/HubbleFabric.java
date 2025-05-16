@@ -11,6 +11,7 @@ public final class HubbleFabric implements ModInitializer {
         // Proceed with mild caution.
 
         // Run our common setup.
+
         Hubble.init();
     }
 }

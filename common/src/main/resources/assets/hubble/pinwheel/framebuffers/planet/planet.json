@@ -4,5 +4,5 @@
   "linear": true,
   "depth": true,
   "format": "RGBA16F",
-  "autoClear": false
+  "autoClear": true
 }

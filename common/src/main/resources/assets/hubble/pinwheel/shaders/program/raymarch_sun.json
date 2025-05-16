@@ -1,4 +1,4 @@
 {
-  "vertex": "hubble:raymarch",
-  "fragment": "hubble:raymarch"
+  "vertex": "veil:blit_screen",
+  "fragment": "hubble:raymarch_sun"
 }

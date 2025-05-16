@@ -1,4 +1,4 @@
-plugins {
+ plugins {
     id 'com.github.johnrengelman.shadow'
 }
 
@@ -37,6 +37,11 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+    implementation "io.github.ocelot:glsl-processor:${glsl_processor_version}"
+    implementation("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}") {
+        exclude group: "maven.modrinth"
+        exclude group: "me.fallenbreath"
+    }
 }
 
 processResources {

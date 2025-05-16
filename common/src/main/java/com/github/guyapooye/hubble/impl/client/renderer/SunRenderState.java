@@ -1,22 +1,20 @@
-package com.github.guyapooye.hubble.client.renderer;
+package com.github.guyapooye.hubble.impl.client.renderer;
 
-import com.github.guyapooye.hubble.client.HubbleRenderer;
-import com.github.guyapooye.hubble.space.SunObject;
+import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.HubbleRenderer;
+import com.github.guyapooye.hubble.impl.object.SunObject;
 import foundry.veil.api.client.render.MatrixStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import org.joml.*;
 
-import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
-import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuadsIO;
-
 public class SunRenderState implements IRenderState<SunObject> {
 
     protected Vector3f position;
     protected Vector3f dimensions;
     protected Quaterniond rotation;
-    protected Vector4f color;
+    protected Vector3f color;
     protected float intensity;
 
     public SunRenderState(SunObject sun) {
@@ -30,7 +28,7 @@ public class SunRenderState implements IRenderState<SunObject> {
     @Override
     public void setup() {
         IRenderState.super.setup();
-        HubbleRenderer.getInstance().getLightData().addValuesNoUpdate(position, dimensions, rotation.get(new Matrix4f()), new Vector3f(this.color.x(), this.color.y(), this.color.z()), intensity);
+        HubbleRenderer.getInstance().getLightData().addValuesNoUpdate(position, dimensions, rotation.get(new Matrix4f()), color, intensity);
     }
 
     @Override

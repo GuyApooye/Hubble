@@ -1,6 +1,6 @@
-package com.github.guyapooye.hubble.space;
+package com.github.guyapooye.hubble.api.object;
 
-import com.github.guyapooye.hubble.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceKey;
@@ -36,6 +36,10 @@ public class HubbleObject<T> {
 
     public void setDimension(ResourceKey<Level> dimension) {
         this.dimension = dimension;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
     }
 
     @Environment(EnvType.CLIENT)

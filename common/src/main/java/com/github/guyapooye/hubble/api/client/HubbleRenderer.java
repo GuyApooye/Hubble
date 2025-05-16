@@ -1,12 +1,11 @@
-package com.github.guyapooye.hubble.impl.client;
+package com.github.guyapooye.hubble.api.client;
 
-import com.github.guyapooye.hubble.impl.client.shader.block.SunData;
-import com.github.guyapooye.hubble.impl.client.shader.block.PlanetData;
+import com.github.guyapooye.hubble.client.shader.block.SunData;
+import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.post.PostProcessingManager;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.*;
 import net.minecraft.resources.ResourceLocation;
@@ -37,8 +36,11 @@ public final class HubbleRenderer implements NativeResource {
 
     public void preRender() {
 
+        planetData.clearNoUpdate();
+        lightData.clearNoUpdate();
+
         HubbleClientManager.getInstance().allObjects().forEach((id, object) -> {
-            ImplicitRenderStateHolder renderData = objectsToRender.get(id);
+            ImplicitRenderStateHolder renderData = objectsToRender.computeIfAbsent(id, (rl) -> new ImplicitRenderStateHolder(object.createRenderState()));
             renderData.update(object);
         });
 
@@ -59,11 +61,9 @@ public final class HubbleRenderer implements NativeResource {
 
     public void postRender() {
         objectsToRender.clear();
-        planetData.clear();
-        lightData.clearNoUpdate();
 
 
-        PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
+//        PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
 //        postManager.runPipeline(postManager.getPipeline(PLANET));
 //        postManager.runPipeline(postManager.getPipeline(BLOOM));
     }

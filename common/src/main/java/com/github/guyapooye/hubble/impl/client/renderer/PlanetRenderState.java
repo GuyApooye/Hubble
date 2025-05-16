@@ -1,8 +1,9 @@
-package com.github.guyapooye.hubble.client.renderer;
+package com.github.guyapooye.hubble.impl.client.renderer;
 
-import com.github.guyapooye.hubble.client.HubbleRenderer;
+import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
-import com.github.guyapooye.hubble.space.PlanetObject;
+import com.github.guyapooye.hubble.impl.object.PlanetObject;
 import com.mojang.blaze3d.vertex.*;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.vertex.VertexArray;
@@ -12,7 +13,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.*;
 
-import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
+import static com.github.guyapooye.hubble.impl.client.util.BoxRenderer.renderBoxQuads;
 
 public class PlanetRenderState implements IRenderState<PlanetObject> {
     protected Vector3f position;

@@ -1,6 +1,3 @@
 {
-  "veil-example-mod.items": "Veil Example",
-  "block.veil-example-mod.map": "Tesselation Map Example",
-  "block.veil-example-mod.mirror": "Mirror Example",
-  "editor.veil-example-mod.inspector.title": "Veil Example Mod"
+  "editor.hubble.inspector.object.title": "Hubble Object Editor"
 }

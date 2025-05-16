@@ -2,9 +2,10 @@
   "stages": [
     {
       "type": "veil:blit",
-      "shader": "veil:blit_screen",
-      "in": "hubble:planet/planet",
-      "clear": false
+      "shader": "hubble:raymarch_sun",
+      "in": "minecraft:main",
+      "out": "veil:post",
+      "clear": true
     }
   ],
   "framebuffers": {
@@ -12,24 +13,6 @@
       "depth": true,
       "linear": true,
       "format": "RGBA16F"
-    }
-  },
-  "textures": {
-    "PreSampler": {
-      "type": "framebuffer",
-      "name": "hubble:pre_planet"
-    },
-    "PreDepthSampler": {
-      "type": "framebuffer",
-      "name": "hubble:pre_planet:depth"
-    },
-    "PostSampler": {
-      "type": "framebuffer",
-      "name": "hubble:post_planet"
-    },
-    "PostDepthSampler": {
-      "type": "framebuffer",
-      "name": "hubble:post_planet:depth"
     }
   },
   "renderStage": "after_block_entities"

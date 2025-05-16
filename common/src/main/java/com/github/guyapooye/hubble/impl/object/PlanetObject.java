@@ -1,7 +1,8 @@
-package com.github.guyapooye.hubble.space;
+package com.github.guyapooye.hubble.impl.object;
 
-import com.github.guyapooye.hubble.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.client.renderer.PlanetRenderState;
+import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.object.HubbleObject;
+import com.github.guyapooye.hubble.impl.client.renderer.PlanetRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Quaterniond;

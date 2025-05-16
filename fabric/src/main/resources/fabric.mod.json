@@ -18,7 +18,7 @@
       "com.github.guyapooye.hubble.fabric.HubbleFabric"
     ],
     "client": [
-      "com.github.guyapooye.hubble.fabric.client.HubbleFabricClient"
+      "com.github.guyapooye.hubble.fabric.HubbleFabricClient"
     ]
   },
   "mixins": [

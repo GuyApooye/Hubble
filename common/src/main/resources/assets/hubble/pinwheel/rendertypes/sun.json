@@ -1,5 +1,5 @@
 {
-  "format": "POSITION_COLOR_TEX_LIGHTMAP",
+  "format": "POSITION_COLOR",
   "mode": "QUADS",
   "bufferSize": "TRANSIENT",
   "sort": false,
@@ -8,18 +8,12 @@
   "layers": [
     [
       {
-        "type": "minecraft:texture",
-        "texture": "%1$s",
-        "blur": false,
-        "mipmap": false
-      },
-      {
         "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_planet"
+        "name": "hubble:rendertype/rendertype_sun"
       },
       {
         "type": "minecraft:depth_test",
-        "mode": "always"
+        "mode": "lequal"
       },
       {
         "type": "minecraft:write_mask",
@@ -29,18 +23,12 @@
     ],
     [
       {
-        "type": "minecraft:texture",
-        "texture": "%1$s",
-        "blur": false,
-        "mipmap": false
-      },
-      {
         "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_planet"
+        "name": "hubble:rendertype/rendertype_sun"
       },
       {
         "type": "minecraft:depth_test",
-        "mode": "always"
+        "mode": "lequal"
       },
       {
         "type": "minecraft:write_mask",
@@ -49,7 +37,7 @@
       },
       {
         "type": "minecraft:output",
-        "framebuffer": "veil:bloom"
+        "framebuffer": "hubble:bloom"
       }
     ]
   ]

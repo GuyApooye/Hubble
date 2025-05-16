@@ -1,6 +1,6 @@
-package com.github.guyapooye.hubble.client.renderer;
+package com.github.guyapooye.hubble.api.client.renderer;
 
-import com.github.guyapooye.hubble.space.HubbleObject;
+import com.github.guyapooye.hubble.api.object.HubbleObject;
 import foundry.veil.api.client.render.MatrixStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -29,11 +29,22 @@ subprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
+        maven {
+            name = 'BlameJared Maven (CrT / Bookshelf)'
+            url = 'https://maven.blamejared.com'
+        }
     }
 
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
+
+        implementation "io.github.spair:imgui-java-binding:$imgui_version"
+        implementation("io.github.spair:imgui-java-lwjgl3:$imgui_version") {
+            exclude group: 'org.lwjgl'
+            exclude group: 'org.lwjgl.lwjgl'
+        }
+//        implementation "io.github.ocelot:glsl-processor:${glsl_processor_version}"
     }
 
     java {

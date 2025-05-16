@@ -4,8 +4,12 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
+    "world.DimensionSpecialEffectsMixin"
   ],
   "mixins": [
+    "debug.DebugVeilShaderBufferCacheMixin",
+    "veil.VeilShaderBufferLayoutBuilderMixin",
+    "veil.VeilShaderBufferRegistryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

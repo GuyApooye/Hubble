@@ -1,23 +1,9 @@
-//#include veil:fog
-
-#define MAX_STEPS 100
-#define MAX_DIST 1000.
+#define MAX_STEPS 200
+#define MAX_DIST 10000.0
 #define SOURCE_SIZE 0.5
-#define DATA_SIZE
 
-struct PlanetRenderData
-{
-    vec3[25] pos;
-    vec3[25] dims;
-    mat4[25] rot;
-};
-
+uniform vec4 ColorModulator;
 uniform sampler2D Sampler0;
-
-uniform PlanetRenderData RenderData;
-
-uniform vec3 Light;
-uniform int DataSize;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -26,61 +12,103 @@ in vec3 fragPos;
 
 out vec4 fragColor;
 
-float sdBox( vec3 p, vec3 b )
-{
-    vec3 q = abs(p) - b;
-    return length(max(q,0.0)) + min(max(q.x,max(q.z,q.y)),0.0);
+bool boxIntersect(in vec3 ro, in vec3 rd, vec3 boxSize, out vec3 normal) {
+    vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
+    vec3 n = m*ro;   // can precompute if traversing a set of aligned boxes
+    vec3 k = abs(m)*boxSize;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+    float tN = max( max( t1.x, t1.y ), t1.z );
+    float tF = min( min( t2.x, t2.y ), t2.z );
+    if( tN>tF || tF<0.0) return false; // no intersection
+    normal = (tN>0.0) ? step(vec3(tN),t1) : // ro ouside the box
+                           step(t2,vec3(tF));  // ro inside the box
+    normal *= -sign(rd);
+    return true;
 }
 
-float sdRotatedBox(vec3 pos, vec3 center, mat4 mat, vec3 dims) {
-    vec4 newPos = vec4(pos - center, 1.0);
-    newPos = newPos * mat;
-    return sdBox(newPos.xyz, dims);
+bool rotatedBoxIntersect(vec3 pos, vec3 dir, vec3 center, vec3 dims, mat4 mat, out vec3 normal) {
+    vec4 newPos = vec4(pos - center, 1.0) * mat;
+    vec4 newDir = vec4(dir, 1.0) * mat;
+    bool hit = boxIntersect(newPos.xyz, newDir.xyz, dims, normal);
+    vec4 why = vec4(normal, 1.0) * mat;
+    normal = why.xyz;
+    return hit;
 }
 
-float sceneSDF(vec3 pos) {
-//    if (RenderData.length() <= 0) return 0.0;
-    float minDist = sdRotatedBox(pos, RenderData.pos[0], RenderData.rot[0], RenderData.dims[0]);
-    for (int i = 1; i < DataSize; i++) {
-        minDist = min(minDist, sdRotatedBox(pos, RenderData.pos[i], RenderData.rot[i], RenderData.dims[i]));
+bool sceneIntersect(vec3 pos, vec3 dir, out vec3 normal) {
+    if (PlanetData.Size <= 0) return false;
+    for (int i = 0; i < PlanetData.DataSize; i++) {
+        if(rotatedBoxIntersect(pos, dir, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], normal)) return true;
     }
-    return minDist;
+    return false;
 }
 
-float raymarchLight(vec3 ro, vec3 lo) {
-
-    float rayLength = length(lo - ro);
-    vec3 rd = (lo - ro) / rayLength;
-
-    float res = 1.0;
-
-    float total = 0.0;
-
-    float stepDistance = .0;
-
-    float ph = 1e20;
-    for(int i = 0; i < MAX_STEPS && total < MAX_DIST; i++) {
-
-        stepDistance = sceneSDF(ro + rd * total);
-        if(stepDistance < 0.0005) {
-            return 0.05;
-        }
-
-        float y = stepDistance*stepDistance/(2.0*ph);
-        float d = sqrt(stepDistance*stepDistance-y*y);
-
-        res = min(res, d/(SOURCE_SIZE*max(0.0,total-y)));
-
-        ph = stepDistance;
-        total += stepDistance;
-//        if (total >= (rayLength - SOURCE_SIZE)) break;
-//        if (length(normalize(lo - (ro + rd * total)) + rd) <= 0.05) break;
+bool lightIntersect(vec3 pos, vec3 dir, out vec3 normal) {
+    if (SunData.Size <= 0) return false;
+    for (int i = 0; i < SunData.DataSize; i++) {
+        if(rotatedBoxIntersect(pos, dir, SunData.Pos[i], SunData.Dims[i], SunData.Rot[i], normal)) return false;
     }
-
-    return max(res,0.05) * 25.0 / rayLength;
+    return true;
 }
 
+//float raymarchLight(vec3 ro, vec3 lo, float intensity) {
+//
+//    float rayLength = length(lo - ro);
+//    vec3 rd = (lo - ro) / rayLength;
+//
+//    float res = 1.0;
+//
+//    float total = 0.0;
+//
+//    float stepDistance = .0;
+//
+//    float ph = 1e20;
+//    for(int i = 0; i < MAX_STEPS && total < MAX_DIST; i++) {
+//
+//        //Previous:
+//        stepDistance = sceneSDF(ro + rd * total);
+//
+//        //stepDistance = min(sceneSDF(ro + rd * total), length(lo - (ro + rd * total)));
+//
+//
+//        if(stepDistance < 0.0001) {
+//            return 0.0;
+//        }
+//
+//        stepDistance /= 3.0;
+//
+//        float y = stepDistance*stepDistance/(2.0*ph);
+//        float d = sqrt(stepDistance*stepDistance-y*y);
+//
+//        res = min(res, d/(SOURCE_SIZE*max(0.0,total-y)));
+//
+//        ph = stepDistance;
+//        total += stepDistance;
+//    }
+//
+//    return max(res * intensity / rayLength ,0.0) ;
+//}
+
+void calculateLight(vec3 fragPos, out float finalLight, out vec3 finalColor) {
+    if (SunData.Size <= 0) return;
+    for (int i = 0; i < SunData.Size; i++) {
+        vec3 dir = SunData.Pos[i] - fragPos;
+        float dist = length(dir);
+        vec3 normal = vec3(0.0);
+        if (sceneIntersect(fragPos + dir/dist*0.1, dir, normal)) continue;
+        float light = max(0.0, dot(normal, -dir)) * SunData.Intensity[i] / (dist * dist);
+        finalLight += light;
+        finalColor += SunData.Color[i] * light;
+    }
+}
 
 void main() {
-    fragColor = texture(Sampler0, texCoord0) * raymarchLight(fragPos, Light);
+    float light = 0.0;
+    vec3 color = vec3(0.0);
+
+    calculateLight(fragPos, light, color);
+    color = ((texture(Sampler0, texCoord0) * light + vec4(color,1.0)) * ColorModulator).xyz;
+    acesToneMapping(color);
+    fragColor = vec4(color,1.0);
 }

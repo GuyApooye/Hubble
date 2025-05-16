@@ -1,7 +1,7 @@
-package com.github.guyapooye.hubble.client.util;
+package com.github.guyapooye.hubble.api.client.util;
 
-import com.github.guyapooye.hubble.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.space.HubbleObject;
+import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.object.HubbleObject;
 import net.minecraft.client.Minecraft;
 
 public class ImplicitRenderStateHolder {
@@ -11,6 +11,10 @@ public class ImplicitRenderStateHolder {
 
     public IRenderState<?> value() {
         return value;
+    }
+
+    public ImplicitRenderStateHolder(IRenderState<?> value) {
+        this.value = value;
     }
 
     public void update(HubbleObject<?> state) {

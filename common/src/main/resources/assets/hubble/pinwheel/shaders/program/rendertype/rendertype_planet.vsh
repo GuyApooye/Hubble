@@ -1,6 +1,3 @@
-#include veil:space_helper
-#veil:buffer veil:camera VeilCamera
-
 layout(location = 0) in vec3 Position;
 layout(location = 2) in vec2 UV0;
 layout(location = 3) in ivec2 UV2;

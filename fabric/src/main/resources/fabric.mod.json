@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "hubble",
+  "version": "${version}",
+  "name": "Hubble",
+  "description": "",
+  "authors": [
+    "GuyApooye"
+  ],
+  "contact": {
+    "homepage": "https://github.com/GuyApooye"
+  },
+  "license": "MIT",
+  "icon": "assets/hubble/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.guyapooye.hubble.fabric.HubbleFabric"
+    ],
+    "client": [
+      "com.github.guyapooye.hubble.fabric.client.HubbleFabricClient"
+    ]
+  },
+  "mixins": [
+    "hubble.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

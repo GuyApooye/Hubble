@@ -5,11 +5,11 @@ import foundry.veil.api.client.render.MatrixStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 
-public interface IRenderState<T> {
+public interface IRenderState<T extends HubbleObject<?>> {
 
     default void setup() {}
 
-    default void render(MatrixStack matrixStack, MultiBufferSource.BufferSource buffer, Camera camera) {}
+    default void render(MatrixStack matrixStack, Camera camera) {}
 
     default void clear() {}
     

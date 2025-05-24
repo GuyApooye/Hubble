@@ -25,7 +25,7 @@ public class PlanetData {
                 VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPos)).hubble$vec3s("Dims", SIZE, PlanetData::getDims)).hubble$mat4s("Rot", SIZE, PlanetData::getRot)).hubble$mat4s("InvRot", SIZE, PlanetData::getInvRot).integer("Size", PlanetData::getSize).build();
     }
 
-    public boolean update(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, int dataSize) {
+    private boolean setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, int dataSize) {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
         if (block == null && dataSize >= SIZE) return false;
         this.pos = pos.clone();
@@ -56,7 +56,7 @@ public class PlanetData {
     }
 
     public void clear() {
-        update(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], 0);
+        setValues(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], 0);
     }
 
     public void clearNoUpdate() {

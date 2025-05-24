@@ -1,0 +1,15 @@
+{
+  "stages": [
+    {
+      "type": "veil:mask",
+      "depth": true
+    },
+    {
+      "type": "veil:blit",
+      "shader": "hubble:sun_march",
+      "in": "minecraft:main",
+      "out": "veil:post",
+      "clear": false
+    }
+  ]
+}

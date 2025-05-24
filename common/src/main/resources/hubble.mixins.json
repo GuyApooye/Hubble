@@ -7,6 +7,7 @@
     "world.DimensionSpecialEffectsMixin"
   ],
   "mixins": [
+    "debug.DebugCameraMatricesMixin",
     "debug.DebugVeilShaderBufferCacheMixin",
     "veil.VeilShaderBufferLayoutBuilderMixin",
     "veil.VeilShaderBufferRegistryMixin"

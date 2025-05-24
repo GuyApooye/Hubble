@@ -6,6 +6,7 @@ import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.post.PostProcessingManager;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.*;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
 import java.util.*;
+
+import static com.github.guyapooye.hubble.HubbleClient.*;
 
 public final class HubbleRenderer implements NativeResource {
 
@@ -35,7 +38,7 @@ public final class HubbleRenderer implements NativeResource {
     }
 
     public void preRender() {
-
+        objectsToRender.clear();
         planetData.clearNoUpdate();
         lightData.clearNoUpdate();
 
@@ -53,25 +56,32 @@ public final class HubbleRenderer implements NativeResource {
 
     }
 
-    public void render(MatrixStack matrixStack, MultiBufferSource.BufferSource buffer, Camera camera) {
+    public void render(MatrixStack matrixStack, Camera camera) {
+
+        PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
+        if (HubbleClientManager.getObjectInspector().useRaycastSuns()) postManager.runPipeline(postManager.getPipeline(SUN_CAST));
+        else postManager.runPipeline(postManager.getPipeline(SUN_MARCH));
+
         for (ImplicitRenderStateHolder data : objectsToRender.values()) {
-            data.value().render(matrixStack, buffer, camera);
+            data.value().render(matrixStack, camera);
         }
+
+
+
     }
 
     public void postRender() {
-        objectsToRender.clear();
 
 
-//        PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
-//        postManager.runPipeline(postManager.getPipeline(PLANET));
-//        postManager.runPipeline(postManager.getPipeline(BLOOM));
+//        RenderSystem.depthMask(true);
+//        VeilRenderSystem.renderer().getShaderManager().getShader(Hubble.path("raymarch_sun")).setSampler("Depth",AdvancedFbo.getMainFramebuffer().toRenderTarget().getDepthTextureId());
     }
 
     @Override
     public void free() {
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.PLANET_DATA.get());
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
+        objectsToRender.clear();
     }
 
     public PlanetData getPlanetData() {

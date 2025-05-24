@@ -1,56 +1,29 @@
 {
-  "format": "POSITION_COLOR_TEX_LIGHTMAP",
+  "format": "POSITION_TEX_COLOR_NORMAL",
   "mode": "QUADS",
   "bufferSize": "TRANSIENT",
   "sort": false,
   "affectsCrumbling": true,
   "outline": false,
   "layers": [
-    [
-      {
-        "type": "minecraft:texture",
-        "texture": "%1$s",
-        "blur": false,
-        "mipmap": false
-      },
-      {
-        "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_planet"
-      },
-      {
-        "type": "minecraft:depth_test",
-        "mode": "lequal"
-      },
-      {
-        "type": "minecraft:write_mask",
-        "color": true,
-        "depth": true
-      }
-    ],
-    [
-      {
-        "type": "minecraft:texture",
-        "texture": "%1$s",
-        "blur": false,
-        "mipmap": false
-      },
-      {
-        "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_planet"
-      },
-      {
-        "type": "minecraft:depth_test",
-        "mode": "lequal"
-      },
-      {
-        "type": "minecraft:write_mask",
-        "color": true,
-        "depth": true
-      },
-      {
-        "type": "minecraft:output",
-        "framebuffer": "hubble:bloom"
-      }
-    ]
+    {
+      "type": "minecraft:texture",
+      "texture": "%1$s",
+      "blur": false,
+      "mipmap": false
+    },
+    {
+      "type": "veil:shader",
+      "name": "hubble:rendertype/rendertype_planet"
+    },
+    {
+      "type": "minecraft:depth_test",
+      "mode": "lequal"
+    },
+    {
+      "type": "minecraft:write_mask",
+      "color": true,
+      "depth": true
+    }
   ]
 }

@@ -69,12 +69,18 @@ public abstract class VeilShaderBufferLayoutBuilderMixin<T> implements VeilShade
         fields.put(name, (value, index, buffer) -> {
             Float[] array = serializer.apply(value);
             for (int i = 0; i < array.length; i++) {
+//                if (array[i] == null) {
+//                    hubble$EMPTY_VEC4.get(index + 16*i, buffer);
+//                    continue;
+//                }
+//                buffer.putFloat(index + 16*i, array[i]);
+//                hubble$EMPTY_VEC3.get(index + 16*i + 1, buffer);
+
                 if (array[i] == null) {
-                    hubble$EMPTY_VEC4.get(index + 16*i, buffer);
+                    buffer.putFloat(index + 4*i, 0.0f);
                     continue;
                 }
-                buffer.putFloat(index + 16*i, array[i]);
-                hubble$EMPTY_VEC3.get(index + 16*i + 1, buffer);
+                buffer.putFloat(index + 4*i, array[i]);
             }
         });
         return (Builder<T>) (Object) this;

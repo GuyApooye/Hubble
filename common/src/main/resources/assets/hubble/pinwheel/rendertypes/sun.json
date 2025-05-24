@@ -1,44 +1,27 @@
 {
   "format": "POSITION_COLOR",
   "mode": "QUADS",
-  "bufferSize": "TRANSIENT",
+  "bufferSize": "BIG",
   "sort": false,
   "affectsCrumbling": true,
   "outline": false,
   "layers": [
-    [
-      {
-        "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_sun"
-      },
-      {
-        "type": "minecraft:depth_test",
-        "mode": "lequal"
-      },
-      {
-        "type": "minecraft:write_mask",
-        "color": true,
-        "depth": true
-      }
-    ],
-    [
-      {
-        "type": "veil:shader",
-        "name": "hubble:rendertype/rendertype_sun"
-      },
-      {
-        "type": "minecraft:depth_test",
-        "mode": "lequal"
-      },
-      {
-        "type": "minecraft:write_mask",
-        "color": true,
-        "depth": true
-      },
-      {
-        "type": "minecraft:output",
-        "framebuffer": "hubble:bloom"
-      }
-    ]
+    {
+      "type": "veil:shader",
+      "name": "hubble:rendertype/rendertype_sun"
+    },
+    {
+      "type": "minecraft:depth_test",
+      "mode": "lequal"
+    },
+    {
+      "type": "minecraft:write_mask",
+      "color": true,
+      "depth": true
+    },
+    {
+      "type": "minecraft:transparency",
+      "mode": "lightning"
+    }
   ]
 }

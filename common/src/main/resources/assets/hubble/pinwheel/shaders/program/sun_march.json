@@ -1,4 +1,4 @@
 {
   "vertex": "veil:blit_screen",
-  "fragment": "hubble:core/unblur"
+  "fragment": "hubble:sun_march"
 }

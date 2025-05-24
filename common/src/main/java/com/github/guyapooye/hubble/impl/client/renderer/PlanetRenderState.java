@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.*;
 
-import static com.github.guyapooye.hubble.impl.client.util.BoxRenderer.renderBoxQuads;
+import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
 
 public class PlanetRenderState implements IRenderState<PlanetObject> {
     protected Vector3f position;
@@ -35,8 +35,8 @@ public class PlanetRenderState implements IRenderState<PlanetObject> {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, MultiBufferSource.BufferSource buffer, Camera camera) {
-        IRenderState.super.render(matrixStack, buffer, camera);
+    public void render(MatrixStack matrixStack, Camera camera) {
+        IRenderState.super.render(matrixStack, camera);
         VertexArray vertexArray = VertexArray.create();
         vertexArray.upload(buildPlanet(position, dimensions, rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
         RenderType planet = HubbleRenderType.planet(texture);

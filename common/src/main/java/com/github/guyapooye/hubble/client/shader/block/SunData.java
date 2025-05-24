@@ -68,7 +68,7 @@ public class SunData {
         return size;
     }
 
-    public boolean update(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
+    private boolean setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
         ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
         if (block == null && size >= SIZE) return false;
         this.pos = pos.clone();
@@ -82,7 +82,7 @@ public class SunData {
         return true;
     }
 
-    public boolean setValuesNoUpdate(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
+    private boolean setValuesNoUpdate(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
         ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
         if (block == null || size >= SIZE) return false;
         this.pos = pos.clone();

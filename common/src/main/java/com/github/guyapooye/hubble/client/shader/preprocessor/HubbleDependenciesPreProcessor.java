@@ -1,16 +1,13 @@
 package com.github.guyapooye.hubble.client.shader.preprocessor;
 
 import foundry.veil.api.client.render.shader.processor.ShaderPreProcessor;
-import io.github.ocelot.glslprocessor.api.GlslSyntaxException;
 import io.github.ocelot.glslprocessor.api.node.GlslTree;
-import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 
-import java.io.IOException;
 import java.util.List;
 
 public class HubbleDependenciesPreProcessor implements ShaderPreProcessor {
     @Override
-    public void modify(Context ctx, GlslTree tree) throws IOException, GlslSyntaxException, LexerException {
+    public void modify(Context ctx, GlslTree tree) {
         if (ctx.name().getNamespace().equals("hubble")) {
             List<String> directives = tree.getDirectives();
             directives.add("#veil:buffer veil:camera VeilCamera");

@@ -1,6 +1,7 @@
-layout(location = 0) in vec3 Position;
-layout(location = 2) in vec2 UV0;
-layout(location = 3) in ivec2 UV2;
+in vec3 Position;
+in vec3 Normal;
+in vec4 Color;
+in vec2 UV0;
 
 uniform sampler2D Sampler2;
 
@@ -14,11 +15,13 @@ uniform int FogShape;
 
 out vec2 texCoord0;
 out vec3 fragPos;
+out vec3 fragNormal;
 
 void main() {
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
     fragPos = pos + VeilCamera.CameraPosition;
+    fragNormal = Normal;
     texCoord0 = UV0;
 }

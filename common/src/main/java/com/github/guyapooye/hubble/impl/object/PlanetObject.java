@@ -31,6 +31,18 @@ public class PlanetObject extends HubbleObject<PlanetObject> {
         return texture;
     }
 
+    public void setDimensions(Vector3f dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public void setRotation(Quaterniond rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setTexture(ResourceLocation texture) {
+        this.texture = texture;
+    }
+
     @Override
     public IRenderState<PlanetObject> createRenderState() {
         return new PlanetRenderState(this);

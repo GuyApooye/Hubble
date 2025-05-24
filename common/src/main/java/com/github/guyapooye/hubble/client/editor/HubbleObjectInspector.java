@@ -1,5 +1,6 @@
 package com.github.guyapooye.hubble.client.editor;
 
+import com.github.guyapooye.hubble.Hubble;
 import com.github.guyapooye.hubble.api.client.HubbleClientManager;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.api.object.HubbleObject;
@@ -7,6 +8,7 @@ import com.github.guyapooye.hubble.impl.object.PlanetObject;
 import com.github.guyapooye.hubble.impl.object.SunObject;
 import foundry.veil.api.client.editor.SingleWindowInspector;
 import imgui.ImGui;
+import imgui.type.ImBoolean;
 import imgui.type.ImString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -28,19 +30,35 @@ public class HubbleObjectInspector extends SingleWindowInspector {
     private static final Map<ResourceLocation, HubbleObject<?>> allObjects = HubbleClientManager.getInstance().allObjects();
     private final List<SunObject> sunObjects = new ArrayList<>();
     private final List<PlanetObject> planetObjects = new ArrayList<>();
-    private int index;
+    private final ImBoolean useRaytracedSuns = new ImBoolean(false);
+    private final boolean devEnv;
+
+    public HubbleObjectInspector(boolean devEnv) {
+        this.devEnv = devEnv;
+    }
 
     @Override
     protected void renderComponents() {
 
+        ImGui.beginDisabled(!devEnv);
+
         if (ImGui.collapsingHeader("Sun")) {
+            ImGui.pushID("suns");
             ImGui.indent();
-
             renderSunComponents();
-
             ImGui.unindent();
+            ImGui.popID();
         }
 
+        if (ImGui.collapsingHeader("Planet")) {
+            ImGui.pushID("planets");
+            ImGui.indent();
+            renderPlanetComponents();
+            ImGui.unindent();
+            ImGui.popID();
+        }
+
+        ImGui.endDisabled();
     }
 
     @Override
@@ -50,7 +68,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
     private void renderSunComponents() {
         if (ImGui.button("Add Sun")) {
-            SunObject newSun = new SunObject(ResourceLocation.fromNamespaceAndPath("hubble", "sun" + sunObjects.size()), Minecraft.getInstance().level.dimension());
+            SunObject newSun = new SunObject(Hubble.path("sun" + sunObjects.size()), Minecraft.getInstance().level.dimension());
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
@@ -59,13 +77,20 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             sunObjects.add(newSun);
         }
 
+        ImGui.text("Use Raytraced Suns: ");
+        ImGui.sameLine();
+        ImGui.checkbox("##raytracedSuns", useRaytracedSuns);
+
         List<SunObject> copy = new ArrayList<>(sunObjects);
 
         ListIterator<SunObject> iterator = copy.listIterator();
 
         while (iterator.hasNext()) {
+
             SunObject sun = iterator.next();
             int index = iterator.nextIndex();
+
+            ImGui.pushID("sun"+index);
 
             boolean wasRemoved = false;
 
@@ -162,6 +187,143 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             allObjects.put(sun.getId(), sun);
             if (wasRemoved) allObjects.remove(oldId);
 
+            ImGui.popID();
+
+        }
+    }
+
+    private void renderPlanetComponents() {
+        if (ImGui.button("Add Planet")) {
+            PlanetObject newPlanet = new PlanetObject(Hubble.path("planet" + planetObjects.size()), Minecraft.getInstance().level.dimension());
+            newPlanet.setPosition(new Vector3f(0.0f));
+            newPlanet.setDimensions(new Vector3f(1.0f));
+            newPlanet.setRotation(new Quaterniond());
+            newPlanet.setTexture(Hubble.path("textures/planet/earth.png"));
+            planetObjects.add(newPlanet);
+        }
+
+//        ImGui.text("Use Raycasting:");
+//        ImGui.sameLine();
+//        ImGui.checkbox("##raycastSuns", useRaycastSuns);
+
+        List<PlanetObject> copy = new ArrayList<>(planetObjects);
+
+        ListIterator<PlanetObject> iterator = copy.listIterator();
+
+        while (iterator.hasNext()) {
+            PlanetObject planet = iterator.next();
+            int index = iterator.nextIndex();
+
+            ImGui.pushID("planet"+index);
+
+            boolean wasRemoved = false;
+
+            ResourceLocation oldId = ResourceLocation.parse(planet.getId().toString());
+
+            if (ImGui.treeNode(index, planet.getId().toString())) {
+
+                ResourceLocation texturePath = ResourceLocation.parse(planet.getTexture().toString());
+
+                Vector3f position = planet.getPosition();
+                Vector3f dimensions = planet.getDimensions();
+                float[] newPos = new float[]{position.x, position.y, position.z};
+                float[] newDims = new float[]{dimensions.x, dimensions.y, dimensions.z};
+                Vector3d rotation = planet.getRotation().getEulerAnglesXYZ(new Vector3d());
+                float[][] newRotation = new float[][]{{(float) rotation.x},{(float) rotation.y},{(float) rotation.z}};
+                ImString newNamespace = new ImString(oldId.getNamespace(), 1000);
+                ImString newPath = new ImString(oldId.getPath(), 1000);
+                ImString newTextureNamespace = new ImString(texturePath.getNamespace(), 1000);
+                ImString newTexturePath = new ImString(texturePath.getPath(), 1000);
+                boolean idChanged = false;
+                boolean textureChanged = false;
+
+                ImGui.indent();
+                ImGui.pushItemWidth(100.0f);
+
+                ImGui.text("ID:");
+                if (ImGui.inputText("##namespace", newNamespace)) {
+                    idChanged = true;
+                }
+
+                ImGui.sameLine();
+                ImGui.text(":");
+                ImGui.sameLine();
+
+                if (ImGui.inputText("##path", newPath)) {
+                    idChanged = true;
+                }
+
+                ImGui.pushItemWidth(300.0f);
+                ImGui.text("Position:");
+                if (ImGui.dragFloat3("##pos", newPos)) {
+                    setObjectPosition(planet, newPos);
+                }
+
+                ImGui.text("Dimensions:");
+                if (ImGui.dragFloat3("##dims", newDims)) {
+                    setPlanetDimensions(planet, newDims);
+                }
+                ImGui.popItemWidth();
+
+                ImGui.text("Rotation:");
+                ImGui.indent();
+                ImGui.text("Yaw: ");
+                ImGui.sameLine();
+                if (ImGui.dragFloat("##yaw", newRotation[0], 0.05f, -10.0f, 10.0f)) {
+                    setPlanetRotation(planet, newRotation);
+                }
+
+                ImGui.text("Pitch: ");
+                ImGui.sameLine();
+                if (ImGui.dragFloat("##pitch", newRotation[1], 0.05f, -10.0f, 10.0f)) {
+                    setPlanetRotation(planet, newRotation);
+                }
+
+                ImGui.text("Roll: ");
+                ImGui.sameLine();
+                if (ImGui.dragFloat("##roll", newRotation[2], 0.05f, -10.0f, 10.0f)) {
+                    setPlanetRotation(planet, newRotation);
+                }
+                ImGui.unindent();
+
+                ImGui.text("Texture:");
+                if (ImGui.inputText("##textureNamespace", newTextureNamespace)) {
+                    textureChanged = true;
+                }
+
+                ImGui.sameLine();
+                ImGui.text(":");
+                ImGui.sameLine();
+
+                if (ImGui.inputText("##texturePath", newTexturePath)) {
+                    textureChanged = true;
+                }
+
+                ImGui.popItemWidth();
+
+                if (ImGui.button("Delete")) {
+                    wasRemoved = true;
+                    planetObjects.remove(planet);
+                }
+
+                if (idChanged) {
+                    if (isValidNamespace(newNamespace.get()) && isValidPath(newPath.get())) planet.setId(ResourceLocation.fromNamespaceAndPath(newNamespace.get(), newPath.get()));
+                    wasRemoved = true;
+                }
+
+                if (textureChanged && isValidNamespace(newTextureNamespace.get()) && isValidPath(newTexturePath.get()))
+                    planet.setTexture(ResourceLocation.fromNamespaceAndPath(newTextureNamespace.get(), newTexturePath.get()));
+
+                ImGui.unindent();
+
+                ImGui.treePop();
+            }
+
+            allObjects.put(planet.getId(), planet);
+            if (wasRemoved) allObjects.remove(oldId);
+
+            ImGui.popID();
+
         }
     }
 
@@ -174,11 +336,23 @@ public class HubbleObjectInspector extends SingleWindowInspector {
     }
 
     private void setSunRotation(SunObject sun, float[][] rotation) {
-        sun.setRotation(new Quaterniond().rotationXYZ(rotation[0][0],rotation[1][0],rotation[1][0]));
+        sun.setRotation(new Quaterniond().rotationXYZ(rotation[0][0],rotation[1][0],rotation[2][0]));
     }
 
     private void setSunColor(SunObject sun, float[] color) {
         sun.setColor(new Vector3f(color[0], color[1], color[2]));
+    }
+
+    public boolean useRaycastSuns() {
+        return useRaytracedSuns.get();
+    }
+
+    private void setPlanetDimensions(PlanetObject planet, float[] dimensions) {
+        planet.setDimensions(new Vector3f(dimensions[0], dimensions[1], dimensions[2]));
+    }
+
+    private void setPlanetRotation(PlanetObject sun, float[][] rotation) {
+        sun.setRotation(new Quaterniond().rotationXYZ(rotation[0][0],rotation[1][0],rotation[2][0]));
     }
 
 }

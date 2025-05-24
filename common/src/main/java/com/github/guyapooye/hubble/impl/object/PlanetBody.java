@@ -1,21 +1,21 @@
 package com.github.guyapooye.hubble.impl.object;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.api.object.HubbleObject;
-import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
+import com.github.guyapooye.hubble.api.object.CelestialBody;
+import com.github.guyapooye.hubble.impl.client.renderer.PlanetRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Quaterniond;
 import net.minecraft.world.level.Level;
-import org.joml.*;
+import org.joml.Vector3f;
 
-public class SunObject extends HubbleObject<SunObject> {
+public class PlanetBody extends CelestialBody<PlanetBody> {
 
     protected Quaterniond rotation;
-    protected Vector3f color;
-    protected float intensity;
     protected Vector3f dimensions;
+    protected ResourceLocation texture;
 
-    public SunObject(ResourceLocation id, ResourceKey<Level> dimension) {
+    public PlanetBody(ResourceLocation id, ResourceKey<Level> dimension) {
         super(id, dimension);
     }
 
@@ -27,12 +27,8 @@ public class SunObject extends HubbleObject<SunObject> {
         return rotation;
     }
 
-    public Vector3f getColor() {
-        return color;
-    }
-
-    public float getIntensity() {
-        return intensity;
+    public ResourceLocation getTexture() {
+        return texture;
     }
 
     public void setDimensions(Vector3f dimensions) {
@@ -43,16 +39,12 @@ public class SunObject extends HubbleObject<SunObject> {
         this.rotation = rotation;
     }
 
-    public void setColor(Vector3f color) {
-        this.color = color;
-    }
-
-    public void setIntensity(float intensity) {
-        this.intensity = intensity;
+    public void setTexture(ResourceLocation texture) {
+        this.texture = texture;
     }
 
     @Override
-    public IRenderState<SunObject> createRenderState() {
-        return new SunRenderState(this);
+    public IRenderState<PlanetBody> createRenderState() {
+        return new PlanetRenderState(this);
     }
 }

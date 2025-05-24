@@ -1,21 +1,21 @@
 package com.github.guyapooye.hubble.impl.object;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.api.object.HubbleObject;
-import com.github.guyapooye.hubble.impl.client.renderer.PlanetRenderState;
+import com.github.guyapooye.hubble.api.object.CelestialBody;
+import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Quaterniond;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3f;
+import org.joml.*;
 
-public class PlanetObject extends HubbleObject<PlanetObject> {
+public class SunBody extends CelestialBody<SunBody> {
 
     protected Quaterniond rotation;
+    protected Vector3f color;
+    protected float intensity;
     protected Vector3f dimensions;
-    protected ResourceLocation texture;
 
-    public PlanetObject(ResourceLocation id, ResourceKey<Level> dimension) {
+    public SunBody(ResourceLocation id, ResourceKey<Level> dimension) {
         super(id, dimension);
     }
 
@@ -27,8 +27,12 @@ public class PlanetObject extends HubbleObject<PlanetObject> {
         return rotation;
     }
 
-    public ResourceLocation getTexture() {
-        return texture;
+    public Vector3f getColor() {
+        return color;
+    }
+
+    public float getIntensity() {
+        return intensity;
     }
 
     public void setDimensions(Vector3f dimensions) {
@@ -39,12 +43,16 @@ public class PlanetObject extends HubbleObject<PlanetObject> {
         this.rotation = rotation;
     }
 
-    public void setTexture(ResourceLocation texture) {
-        this.texture = texture;
+    public void setColor(Vector3f color) {
+        this.color = color;
+    }
+
+    public void setIntensity(float intensity) {
+        this.intensity = intensity;
     }
 
     @Override
-    public IRenderState<PlanetObject> createRenderState() {
-        return new PlanetRenderState(this);
+    public IRenderState<SunBody> createRenderState() {
+        return new SunRenderState(this);
     }
 }

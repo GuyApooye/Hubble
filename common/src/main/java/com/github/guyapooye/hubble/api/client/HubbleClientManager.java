@@ -1,8 +1,7 @@
 package com.github.guyapooye.hubble.api.client;
 
-import com.github.guyapooye.hubble.api.object.CelestialBody;
+import com.github.guyapooye.hubble.api.body.CelestialBody;
 import com.github.guyapooye.hubble.client.editor.HubbleObjectInspector;
-import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.Veil;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.resources.ResourceLocation;

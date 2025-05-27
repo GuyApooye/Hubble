@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.api.object;
+package com.github.guyapooye.hubble.api.body;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import net.fabricmc.api.EnvType;

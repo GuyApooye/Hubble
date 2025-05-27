@@ -3,12 +3,13 @@ package com.github.guyapooye.hubble.api.client;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
+import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.post.PostProcessingManager;
+import foundry.veil.api.client.render.vertex.VertexArray;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
@@ -22,15 +23,16 @@ public final class HubbleRenderer implements NativeResource {
     private final static HubbleRenderer instance = new HubbleRenderer();
     private final Map<ResourceLocation, ImplicitRenderStateHolder> objectsToRender = new HashMap<>();
     private final PlanetData planetData;
-    private final SunData lightData;
+    private final SunData sunData;
 
     private HubbleRenderer() {
         planetData = new PlanetData();
-        lightData = new SunData();
+        sunData = new SunData();
     }
 
     @ApiStatus.Internal
     public static void bootstrap() {
+        SunRenderState.setVertexArray(VertexArray.create());
     }
 
     public static HubbleRenderer getInstance() {
@@ -40,7 +42,7 @@ public final class HubbleRenderer implements NativeResource {
     public void preRender() {
         objectsToRender.clear();
         planetData.clearNoUpdate();
-        lightData.clearNoUpdate();
+        sunData.clearNoUpdate();
 
         HubbleClientManager.getInstance().allObjects().forEach((id, object) -> {
             ImplicitRenderStateHolder renderData = objectsToRender.computeIfAbsent(id, (rl) -> new ImplicitRenderStateHolder(object.createRenderState()));
@@ -52,7 +54,7 @@ public final class HubbleRenderer implements NativeResource {
         }
 
         this.planetData.update();
-        this.lightData.update();
+        this.sunData.update();
 
     }
 
@@ -88,7 +90,7 @@ public final class HubbleRenderer implements NativeResource {
         return planetData;
     }
 
-    public SunData getLightData() {
-        return lightData;
+    public SunData getSunData() {
+        return sunData;
     }
 }

@@ -1,4 +1,7 @@
 {
   "vertex": "veil:blit_screen",
-  "fragment": "hubble:sun_march"
+  "fragment": "hubble:sun_march",
+  "textures": {
+    "NoiseSampler": "hubble:textures/noise/blue_noise.png"
+  }
 }

@@ -28,11 +28,11 @@ bool boxIntersect(in vec3 ro, in vec3 rd, vec3 boxSize, out vec3 normal) {
     return true;
 }
 
-bool rotatedBoxIntersect(vec3 pos, vec3 dir, vec3 center, vec3 dims, mat4 mat, out vec3 normal) {
+bool rotatedBoxIntersect(vec3 pos, vec3 dir, vec3 center, vec3 dims, mat4 mat, mat4 imat, out vec3 normal) {
     vec4 newPos = vec4(pos - center, 1.0) * mat;
     vec4 newDir = vec4(dir, 1.0) * mat;
     bool hit = boxIntersect(newPos.xyz, newDir.xyz, dims, normal);
-    vec4 newNormal = vec4(normal, 1.0) * mat;
+    vec4 newNormal = vec4(normal, 1.0) * imat;
     normal = newNormal.xyz;
     return hit;
 }
@@ -51,7 +51,7 @@ float sdRotatedBox(vec3 pos, vec3 center, vec3 dims, mat4 mat) {
 bool sceneIntersect(vec3 pos, vec3 dir, out vec3 normal) {
     if (PlanetData.Size <= 0) return false;
     for (int i = 0; i < PlanetData.Size; i++) {
-        if(rotatedBoxIntersect(pos, dir, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], normal)) return true;
+        if(rotatedBoxIntersect(pos, dir, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], PlanetData.InvRot[i], normal)) return true;
     }
     return false;
 }
@@ -69,7 +69,7 @@ float sceneSDF(vec3 pos) {
 bool lightIntersect(vec3 pos, vec3 dir, out vec3 normal) {
     if (SunData.Size <= 0) return false;
     for (int i = 0; i < SunData.Size; i++) {
-        if(rotatedBoxIntersect(pos, dir, SunData.Pos[i], SunData.Dims[i], SunData.Rot[i], normal)) return false;
+        if(rotatedBoxIntersect(pos, dir, SunData.Pos[i], SunData.Dims[i], SunData.Rot[i], SunData.InvRot[i], normal)) return true;
     }
     return true;
 }
@@ -119,12 +119,12 @@ float calculateLight(vec3 fragPos) {
         vec3 dir = SunData.Pos[i] - fragPos;
         float dist = length(dir);
         vec3 normal = vec3(1.0);
-//        dir /= dist;
-        if (sceneIntersect(fragPos + 0.01*dir, dir, normal)) continue;
+        dir /= dist;
+        if (sceneIntersect(fragPos + 0.01 * dir, dir, normal)) continue;
 //        float light = raymarchLight(fragPos, SunData.Pos[i], SunData.Intensity[i]);
 //        finalLight += light;
 //        finalColor += vec4(SunData.Color[i],1.0) * light;
-        light += SunData.Intensity[i]*SunData.Length[i] / (dist * dist);
+        light += /**dot(fragNormal, dir) **/ SunData.Intensity[i]*SunData.Length[i] / (dist * dist);
 //        light += fragNormal.y;
 //        finalColor += SunData.Color[i] * light;
     }
@@ -135,10 +135,10 @@ void main() {
     float light = calculateLight(fragPos);
 //    vec4 color = vec4(0.0);
 
-//    color = ((texture(Sampler0, texCoord0) * light + vec4(color,1.0)) * ColorModulator).xyz;
+    fragColor = texture(Sampler0, texCoord0) * light * ColorModulator;
 //    acesToneMapping(color);
-//    fragColor = vec4(color,1.0);
-    fragColor = vec4(fragNormal,1.0);
+//    fragColor = vec4(vec3(0.3,0.4,0.5),1.0);
+//    fragColor = vec4(fragNormal,1.0);
 //    fragColor = vec4(fragNormal,1.0);
 //    fragColor *= ColorModulator;
 //    fragColor = vec4(fragNormal*1000,1.0);

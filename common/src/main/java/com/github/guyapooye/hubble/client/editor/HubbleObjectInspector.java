@@ -3,9 +3,9 @@ package com.github.guyapooye.hubble.client.editor;
 import com.github.guyapooye.hubble.Hubble;
 import com.github.guyapooye.hubble.api.client.HubbleClientManager;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
-import com.github.guyapooye.hubble.api.object.HubbleObject;
-import com.github.guyapooye.hubble.impl.object.PlanetObject;
-import com.github.guyapooye.hubble.impl.object.SunObject;
+import com.github.guyapooye.hubble.api.object.CelestialBody;
+import com.github.guyapooye.hubble.impl.object.PlanetBody;
+import com.github.guyapooye.hubble.impl.object.SunBody;
 import foundry.veil.api.client.editor.SingleWindowInspector;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
@@ -27,9 +27,9 @@ import static net.minecraft.resources.ResourceLocation.isValidPath;
 
 public class HubbleObjectInspector extends SingleWindowInspector {
     private static final HubbleRenderer renderer = HubbleRenderer.getInstance();
-    private static final Map<ResourceLocation, HubbleObject<?>> allObjects = HubbleClientManager.getInstance().allObjects();
-    private final List<SunObject> sunObjects = new ArrayList<>();
-    private final List<PlanetObject> planetObjects = new ArrayList<>();
+    private static final Map<ResourceLocation, CelestialBody<?>> allObjects = HubbleClientManager.getInstance().allObjects();
+    private final List<SunBody> sunObjects = new ArrayList<>();
+    private final List<PlanetBody> planetObjects = new ArrayList<>();
     private final ImBoolean useRaytracedSuns = new ImBoolean(false);
     private final boolean devEnv;
 
@@ -68,7 +68,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
     private void renderSunComponents() {
         if (ImGui.button("Add Sun")) {
-            SunObject newSun = new SunObject(Hubble.path("sun" + sunObjects.size()), Minecraft.getInstance().level.dimension());
+            SunBody newSun = new SunBody(Hubble.path("sun" + sunObjects.size()), Minecraft.getInstance().level.dimension());
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
@@ -81,13 +81,13 @@ public class HubbleObjectInspector extends SingleWindowInspector {
         ImGui.sameLine();
         ImGui.checkbox("##raytracedSuns", useRaytracedSuns);
 
-        List<SunObject> copy = new ArrayList<>(sunObjects);
+        List<SunBody> copy = new ArrayList<>(sunObjects);
 
-        ListIterator<SunObject> iterator = copy.listIterator();
+        ListIterator<SunBody> iterator = copy.listIterator();
 
         while (iterator.hasNext()) {
 
-            SunObject sun = iterator.next();
+            SunBody sun = iterator.next();
             int index = iterator.nextIndex();
 
             ImGui.pushID("sun"+index);
@@ -194,7 +194,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
     private void renderPlanetComponents() {
         if (ImGui.button("Add Planet")) {
-            PlanetObject newPlanet = new PlanetObject(Hubble.path("planet" + planetObjects.size()), Minecraft.getInstance().level.dimension());
+            PlanetBody newPlanet = new PlanetBody(Hubble.path("planet" + planetObjects.size()), Minecraft.getInstance().level.dimension());
             newPlanet.setPosition(new Vector3f(0.0f));
             newPlanet.setDimensions(new Vector3f(1.0f));
             newPlanet.setRotation(new Quaterniond());
@@ -206,12 +206,12 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 //        ImGui.sameLine();
 //        ImGui.checkbox("##raycastSuns", useRaycastSuns);
 
-        List<PlanetObject> copy = new ArrayList<>(planetObjects);
+        List<PlanetBody> copy = new ArrayList<>(planetObjects);
 
-        ListIterator<PlanetObject> iterator = copy.listIterator();
+        ListIterator<PlanetBody> iterator = copy.listIterator();
 
         while (iterator.hasNext()) {
-            PlanetObject planet = iterator.next();
+            PlanetBody planet = iterator.next();
             int index = iterator.nextIndex();
 
             ImGui.pushID("planet"+index);
@@ -327,19 +327,19 @@ public class HubbleObjectInspector extends SingleWindowInspector {
         }
     }
 
-    private void setObjectPosition(HubbleObject<?> object, float[] position) {
+    private void setObjectPosition(CelestialBody<?> object, float[] position) {
         object.setPosition(new Vector3f(position[0], position[1], position[2]));
     }
 
-    private void setSunDimensions(SunObject sun, float[] dimensions) {
+    private void setSunDimensions(SunBody sun, float[] dimensions) {
         sun.setDimensions(new Vector3f(dimensions[0], dimensions[1], dimensions[2]));
     }
 
-    private void setSunRotation(SunObject sun, float[][] rotation) {
+    private void setSunRotation(SunBody sun, float[][] rotation) {
         sun.setRotation(new Quaterniond().rotationXYZ(rotation[0][0],rotation[1][0],rotation[2][0]));
     }
 
-    private void setSunColor(SunObject sun, float[] color) {
+    private void setSunColor(SunBody sun, float[] color) {
         sun.setColor(new Vector3f(color[0], color[1], color[2]));
     }
 
@@ -347,11 +347,11 @@ public class HubbleObjectInspector extends SingleWindowInspector {
         return useRaytracedSuns.get();
     }
 
-    private void setPlanetDimensions(PlanetObject planet, float[] dimensions) {
+    private void setPlanetDimensions(PlanetBody planet, float[] dimensions) {
         planet.setDimensions(new Vector3f(dimensions[0], dimensions[1], dimensions[2]));
     }
 
-    private void setPlanetRotation(PlanetObject sun, float[][] rotation) {
+    private void setPlanetRotation(PlanetBody sun, float[][] rotation) {
         sun.setRotation(new Quaterniond().rotationXYZ(rotation[0][0],rotation[1][0],rotation[2][0]));
     }
 

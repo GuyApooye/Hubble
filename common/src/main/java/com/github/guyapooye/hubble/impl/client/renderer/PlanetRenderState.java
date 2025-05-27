@@ -2,8 +2,8 @@ package com.github.guyapooye.hubble.impl.client.renderer;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
+import com.github.guyapooye.hubble.impl.object.PlanetBody;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
-import com.github.guyapooye.hubble.impl.object.PlanetObject;
 import com.mojang.blaze3d.vertex.*;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.vertex.VertexArray;
@@ -15,13 +15,13 @@ import org.joml.*;
 
 import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
 
-public class PlanetRenderState implements IRenderState<PlanetObject> {
+public class PlanetRenderState implements IRenderState<PlanetBody> {
     protected Vector3f position;
     protected Vector3f dimensions;
     protected Quaterniond rotation;
     protected ResourceLocation texture;
 
-    public PlanetRenderState(PlanetObject planet) {
+    public PlanetRenderState(PlanetBody planet) {
         position = planet.getPosition();
         dimensions = planet.getDimensions();
         rotation = planet.getRotation();
@@ -81,7 +81,7 @@ public class PlanetRenderState implements IRenderState<PlanetObject> {
         return builder.buildOrThrow();
     }
 
-    public void update(PlanetObject load, float partialTicks) {
+    public void update(PlanetBody load, float partialTicks) {
         IRenderState.super.update(load, partialTicks);
         position.lerp(load.getPosition(), partialTicks);
         dimensions.lerp(load.getDimensions(), partialTicks);
@@ -90,7 +90,7 @@ public class PlanetRenderState implements IRenderState<PlanetObject> {
     }
 
     @Override
-    public void load(PlanetObject load) {
+    public void load(PlanetBody load) {
         IRenderState.super.load(load);
         position = load.getPosition();
         dimensions = load.getDimensions();

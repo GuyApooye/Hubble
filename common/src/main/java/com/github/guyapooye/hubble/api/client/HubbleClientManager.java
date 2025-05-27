@@ -1,8 +1,7 @@
 package com.github.guyapooye.hubble.api.client;
 
-import com.github.guyapooye.hubble.api.object.HubbleObject;
+import com.github.guyapooye.hubble.api.body.CelestialBody;
 import com.github.guyapooye.hubble.client.editor.HubbleObjectInspector;
-import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.Veil;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,7 @@ public final class HubbleClientManager {
     private static final HubbleClientManager INSTANCE = new HubbleClientManager();
     private static final HubbleObjectInspector objectInspector = new HubbleObjectInspector(Veil.platform().isDevelopmentEnvironment());
 
-    private final ConcurrentHashMap<ResourceLocation, HubbleObject<?>> allObjects = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ResourceLocation, CelestialBody<?>> allObjects = new ConcurrentHashMap<>();
 
     @ApiStatus.Internal
     public static void bootstrap() {
@@ -32,7 +31,7 @@ public final class HubbleClientManager {
         return INSTANCE;
     }
 
-    public Map<ResourceLocation, HubbleObject<?>> allObjects() {
+    public Map<ResourceLocation, CelestialBody<?>> allObjects() {
         return allObjects;
     }
 

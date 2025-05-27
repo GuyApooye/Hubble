@@ -1,7 +1,7 @@
 package com.github.guyapooye.hubble.impl.object;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.api.object.CelestialBody;
+import com.github.guyapooye.hubble.api.body.CelestialBody;
 import com.github.guyapooye.hubble.impl.client.renderer.PlanetRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

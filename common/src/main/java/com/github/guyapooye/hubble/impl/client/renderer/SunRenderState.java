@@ -3,19 +3,16 @@ package com.github.guyapooye.hubble.impl.client.renderer;
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.client.util.BoxRenderer;
-import com.github.guyapooye.hubble.impl.object.SunObject;
+import com.github.guyapooye.hubble.impl.object.SunBody;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.*;
 
-public class SunRenderState implements IRenderState<SunObject> {
+public class SunRenderState implements IRenderState<SunBody> {
 
     protected Vector3f position;
     protected Vector3f dimensions;
@@ -23,7 +20,7 @@ public class SunRenderState implements IRenderState<SunObject> {
     protected Vector3f color;
     protected float intensity;
 
-    public SunRenderState(SunObject sun) {
+    public SunRenderState(SunBody sun) {
         this.position = sun.getPosition();
         this.dimensions = sun.getDimensions();
         this.rotation = sun.getRotation();
@@ -34,15 +31,15 @@ public class SunRenderState implements IRenderState<SunObject> {
     @Override
     public void setup() {
         IRenderState.super.setup();
-        HubbleRenderer.getInstance().getLightData().addValuesNoUpdate(position, dimensions, rotation.get(new Matrix4f()), color, intensity);
+        HubbleRenderer.getInstance().getLightData().addValuesNoUpdate(position, dimensions.div(2, new Vector3f()), rotation.get(new Matrix4f()), color, intensity);
     }
 
     @Override
     public void render(MatrixStack matrixStack, Camera camera) {
         IRenderState.super.render(matrixStack, camera);
-        VertexArray vertexArray = VertexArray.create();
-        vertexArray.upload(buildSun(position, dimensions, new Vector3f(color), rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
-        vertexArray.drawWithRenderType(HubbleRenderType.sun());
+//        VertexArray vertexArray = VertexArray.create();
+//        vertexArray.upload(buildSun(position, dimensions.div(2, new Vector3f()), new Vector3f(color), rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
+//        vertexArray.drawWithRenderType(HubbleRenderType.sun());
     }
 
     public static MeshData buildSun(Vector3fc pos, Vector3fc dims, Vector3fc color, Quaterniondc rot, MatrixStack matrixStack, Camera camera) {
@@ -69,7 +66,7 @@ public class SunRenderState implements IRenderState<SunObject> {
     }
 
     @Override
-    public void update(SunObject load, float partialTicks) {
+    public void update(SunBody load, float partialTicks) {
         IRenderState.super.update(load, partialTicks);
         position.lerp(load.getPosition(), partialTicks);
         dimensions.lerp(load.getDimensions(), partialTicks);
@@ -79,7 +76,7 @@ public class SunRenderState implements IRenderState<SunObject> {
     }
 
     @Override
-    public void load(SunObject load) {
+    public void load(SunBody load) {
         IRenderState.super.load(load);
         this.position = load.getPosition();
         this.dimensions = load.getDimensions();

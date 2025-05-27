@@ -1,11 +1,10 @@
 package com.github.guyapooye.hubble.api.client.renderer;
 
-import com.github.guyapooye.hubble.api.object.HubbleObject;
+import com.github.guyapooye.hubble.api.body.CelestialBody;
 import foundry.veil.api.client.render.MatrixStack;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 
-public interface IRenderState<T extends HubbleObject<?>> {
+public interface IRenderState<T extends CelestialBody<?>> {
 
     default void setup() {}
 
@@ -18,14 +17,14 @@ public interface IRenderState<T extends HubbleObject<?>> {
     default void load(T load) {}
 
     @SuppressWarnings("unchecked")
-    default boolean tryUpdate(HubbleObject<?> object, float partialTicks) {
+    default boolean tryUpdate(CelestialBody<?> object, float partialTicks) {
         if (!getClass().isInstance(object)) return false;
         update((T) object, partialTicks);
         return true;
     }
 
     @SuppressWarnings("unchecked")
-    default boolean tryLoad(HubbleObject<?> object) {
+    default boolean tryLoad(CelestialBody<?> object) {
         if (!getClass().isInstance(object)) return false;
         load((T) object);
         return true;

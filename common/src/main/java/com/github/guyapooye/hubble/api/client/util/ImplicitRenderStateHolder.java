@@ -1,7 +1,7 @@
 package com.github.guyapooye.hubble.api.client.util;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
-import com.github.guyapooye.hubble.api.object.HubbleObject;
+import com.github.guyapooye.hubble.api.body.CelestialBody;
 import net.minecraft.client.Minecraft;
 
 public class ImplicitRenderStateHolder {
@@ -17,11 +17,11 @@ public class ImplicitRenderStateHolder {
         this.value = value;
     }
 
-    public void update(HubbleObject<?> state) {
+    public void update(CelestialBody<?> state) {
         if (!value.tryUpdate(state, mc.getTimer().getGameTimeDeltaTicks())) value = state.createRenderState();
     }
 
-    public void load(HubbleObject<?> state) {
+    public void load(CelestialBody<?> state) {
         if (!value.tryLoad(state)) value = state.createRenderState();
     }
 }

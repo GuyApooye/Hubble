@@ -8,6 +8,7 @@ import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import com.mojang.logging.LogUtils;
 import foundry.veil.Veil;
 import foundry.veil.VeilClient;
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.client.Minecraft;
@@ -46,6 +47,7 @@ public final class HubbleClient {
         VeilEventPlatform.INSTANCE.onVeilRendererAvailable(renderer -> {
             HubbleShaderBufferRegistry.bootstrap();
             HubbleRenderer.bootstrap();
+            renderer.enableBuffers(HubbleClient.PLANET, DynamicBufferType.NORMAL);
         });
 
         VeilEventPlatform.INSTANCE.onVeilAddShaderProcessors((resourceProvider, registry) -> {

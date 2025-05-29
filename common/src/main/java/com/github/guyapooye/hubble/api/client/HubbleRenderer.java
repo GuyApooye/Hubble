@@ -59,8 +59,7 @@ public final class HubbleRenderer implements NativeResource {
     public void render(MatrixStack matrixStack, Camera camera) {
 
         PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
-        if (HubbleClientManager.getObjectInspector().useRaycastSuns()) postManager.runPipeline(postManager.getPipeline(SUN_CAST));
-        else postManager.runPipeline(postManager.getPipeline(SUN_MARCH));
+        if (!HubbleClientManager.getObjectInspector().disableSuns()) postManager.runPipeline(postManager.getPipeline(SUN));
 
         for (ImplicitRenderStateHolder data : objectsToRender.values()) {
             data.value().render(matrixStack, camera);

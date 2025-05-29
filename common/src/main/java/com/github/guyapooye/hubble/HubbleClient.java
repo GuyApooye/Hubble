@@ -20,8 +20,6 @@ import static com.github.guyapooye.hubble.Hubble.SPACE;
 public final class HubbleClient {
 
     public static final ResourceLocation PLANET = Hubble.path("planet");
-    public static final ResourceLocation SUN_MARCH = Hubble.path("sun_march");
-    public static final ResourceLocation SUN_CAST = Hubble.path("sun_cast");
     public static final ResourceLocation SUN = Hubble.path("sun");
     public static final ResourceLocation RENDERTYPE_PLANET = Hubble.path("rendertype/rendertype_planet");
     public static final ResourceLocation CELESTIAL_OBJECT = Hubble.path("celestial_object");
@@ -47,7 +45,6 @@ public final class HubbleClient {
         VeilEventPlatform.INSTANCE.onVeilRendererAvailable(renderer -> {
             HubbleShaderBufferRegistry.bootstrap();
             HubbleRenderer.bootstrap();
-            renderer.enableBuffers(HubbleClient.PLANET, DynamicBufferType.NORMAL);
         });
 
         VeilEventPlatform.INSTANCE.onVeilAddShaderProcessors((resourceProvider, registry) -> {

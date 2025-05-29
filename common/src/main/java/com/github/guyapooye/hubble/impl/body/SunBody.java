@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.impl.object;
+package com.github.guyapooye.hubble.impl.body;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.body.CelestialBody;

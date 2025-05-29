@@ -81,37 +81,38 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in int j, in float depth, out fl
 
     float near = 0.0;
 
-    bool hit = iRotatedBox(ro, rd, SunData.Pos[i], SunData.Dims[i]*(1.0-0.2*j), SunData.Rot[i], near);
+    bool hit = iRotatedBox(ro, rd, SunData.Pos[i], SunData.Dims[i]*(1.0-0.15*j), SunData.Rot[i], near);
 
     if (near >= depth) return false;
 
     if (!hit) return false;
 
     dist = near;
-    color = vec4(SunData.Color[i], 1.0) * /**sqrt(j+1) **/ 5.0;
+    color = vec4(SunData.Color[i], 1.0) * ((j/8.0)+1) * 3.0;
     return true;
 
 }
 
 bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, out vec4 color) {
 
-    for (int j = 0; j <= 4; ++j) {
-       if (raytrace(ro, rd, i, 4-j, depth, dist, color)) return true;
+    for (int j = 3; j >= 0; --j) {
+       if (raytrace(ro, rd, i, j, depth, dist, color)) return true;
     }
 
     return false;
 
 }
 
-vec4 calculate(in vec3 ro, in vec3 rd, in float noise, in float depth) {
+bool calculate(in vec3 ro, in vec3 rd, in float depth, out vec4 hitColor, out vec4 glowColor) {
 
-    if (SunData.Size <= 0) return vec4(0.0);
+    if (SunData.Size <= 0) return false;
 
-    vec4 finalColor = vec4(0.0);
-
-    vec4 traceColor = vec4(0.0);
+    glowColor = vec4(0.0);
+    hitColor = vec4(0.0);
 
     float closestDistance = 100000.0;
+
+    int hitIndex = -1;
 
     for (int i = 0; i < SunData.Size; ++i) {
 
@@ -121,25 +122,29 @@ vec4 calculate(in vec3 ro, in vec3 rd, in float noise, in float depth) {
 
         bool hit = raytrace(ro, rd, i, closestDistance, dist, color);
 
+
         if (hit) {
             if (closestDistance > dist) {
-                traceColor = color;
+                hitColor = color;
+                hitIndex = i;
                 closestDistance = dist;
             }
             continue;
         }
 
-        color = raymarch(ro, rd, i, closestDistance);
+    }
 
-        color.xyz *= noise;
+    for (int i = 0; i < SunData.Size; ++i) {
 
-        finalColor += color*color.a;
+        if (i == hitIndex) continue;
+
+        float distTraveled = 0.0;
+
+        glowColor += raymarch(ro, rd, i, closestDistance);
 
     }
 
-    finalColor += traceColor;
-
-    return finalColor;
+    return hitIndex != -1;
 }
 
 void main() {
@@ -152,11 +157,18 @@ void main() {
     float noise = texture(NoiseSampler, 10.0*texCoord).r;
     noise = 1 + (noise - 0.5) * .2;
 
+    vec4 glowColor = vec4(0.0);
 
-    vec4 color = calculate(camera, rd, noise, depth);
+    vec4 color = vec4(0.0);
 
-    color.a = clamp(color.a,0.0,1.0);
+    bool hit = calculate(camera, rd, depth, color, glowColor);
 
-    fragColor = fragColor * (1-color.a) + color;
+    if (hit) fragColor = color;
+
+    glowColor.xyz *= noise;
+
+    glowColor.a = clamp(glowColor.a,0.0,1.0);
+
+    fragColor = fragColor * (1-glowColor.a) + glowColor;
 
 }

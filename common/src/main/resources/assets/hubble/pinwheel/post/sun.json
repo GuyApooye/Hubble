@@ -6,7 +6,7 @@
     },
     {
       "type": "veil:blit",
-      "shader": "hubble:sun_march",
+      "shader": "hubble:post/sun",
       "in": "minecraft:main",
       "out": "veil:post",
       "clear": false

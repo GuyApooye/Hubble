@@ -30,38 +30,80 @@ public class HubbleObjectInspector extends SingleWindowInspector {
     private static final Map<ResourceLocation, CelestialBody<?>> allObjects = HubbleClientManager.getInstance().allObjects();
     private final Object2ObjectArrayMap<SunBody, ImBoolean> sunObjects = new Object2ObjectArrayMap<>();
     private final Object2ObjectArrayMap<PlanetBody, ImBoolean> planetObjects = new Object2ObjectArrayMap<>();
-    private final ImBoolean useRaytracedSuns = new ImBoolean(false);
+    private final ImBoolean disableSuns = new ImBoolean(false);
     private final boolean devEnv;
 
     public HubbleObjectInspector(boolean devEnv) {
         this.devEnv = devEnv;
 
+        SunBody newSun;
+
         {
-            SunBody newSun = new SunBody(Hubble.path("sun0"), null);
+            newSun = new SunBody(Hubble.path("sun0"), null);
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(1.0f,0.325f,0.24f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
         {
-            SunBody newSun = new SunBody(Hubble.path("sun1"), null);
+            newSun = new SunBody(Hubble.path("sun1"), null);
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.24f,0.325f,1.0f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
         {
-            SunBody newSun = new SunBody(Hubble.path("sun2"), null);
+            newSun = new SunBody(Hubble.path("sun2"), null);
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.23f,1.0f,0.25f));
+            newSun.setIntensity(100.0f);
+            sunObjects.put(newSun, new ImBoolean(true));
+        }
+
+        {
+            newSun = new SunBody(Hubble.path("sun3"), null);
+            newSun.setPosition(new Vector3f(0.0f,0.0f,-1.0f));
+            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setRotation(new Quaterniond());
+            newSun.setColor(new Vector3f(1.0f,0.25f,0.25f));
+            newSun.setIntensity(100.0f);
+            sunObjects.put(newSun, new ImBoolean(false));
+        }
+
+        {
+            newSun = new SunBody(Hubble.path("sun4"), null);
+            newSun.setPosition(new Vector3f(-1.0f,0.0f,0.0f));
+            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setRotation(new Quaterniond());
+            newSun.setColor(new Vector3f(0.2f,0.3f,1.0f));
+            newSun.setIntensity(100.0f);
+            sunObjects.put(newSun, new ImBoolean(false));
+        }
+
+        {
+            newSun = new SunBody(Hubble.path("sun5"), null);
+            newSun.setPosition(new Vector3f(0.0f,0.0f,1.0f));
+            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setRotation(new Quaterniond());
+            newSun.setColor(new Vector3f(0.2f,1.0f,0.2f));
+            newSun.setIntensity(100.0f);
+            sunObjects.put(newSun, new ImBoolean(false));
+        }
+
+        {
+            newSun = new SunBody(Hubble.path("sun6"), null);
+            newSun.setPosition(new Vector3f(1.0f,0.0f,0.0f));
+            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setRotation(new Quaterniond());
+            newSun.setColor(new Vector3f(1.0f,1.0f,0.225f));
             newSun.setIntensity(100.0f);
             sunObjects.put(newSun, new ImBoolean(false));
         }
@@ -72,12 +114,6 @@ public class HubbleObjectInspector extends SingleWindowInspector {
     protected void renderComponents() {
 
         ImGui.beginDisabled(!devEnv);
-
-        if (ImGui.button(":skull emoji:")) {
-            allObjects.clear();
-            sunObjects.clear();
-            planetObjects.clear();
-        }
 
         if (ImGui.collapsingHeader("Sun")) {
             ImGui.pushID("suns");
@@ -114,9 +150,9 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             sunObjects.put(newSun, new ImBoolean(false));
         }
 
-        ImGui.text("Use Raytraced Suns:");
+        ImGui.text("Disable Suns:");
         ImGui.sameLine();
-        ImGui.checkbox("##raytracedSuns", useRaytracedSuns);
+        ImGui.checkbox("##disableSuns", disableSuns);
 
         Object2ObjectArrayMap<SunBody, ImBoolean> copy = sunObjects.clone();
 
@@ -397,8 +433,8 @@ public class HubbleObjectInspector extends SingleWindowInspector {
         sun.setColor(new Vector3f(color[0], color[1], color[2]));
     }
 
-    public boolean useRaycastSuns() {
-        return useRaytracedSuns.get();
+    public boolean disableSuns() {
+        return disableSuns.get();
     }
 
     private void setPlanetDimensions(PlanetBody planet, float[] dimensions) {

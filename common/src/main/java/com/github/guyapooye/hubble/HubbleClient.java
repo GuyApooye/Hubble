@@ -8,6 +8,7 @@ import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import com.mojang.logging.LogUtils;
 import foundry.veil.Veil;
 import foundry.veil.VeilClient;
+import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.client.Minecraft;
@@ -19,8 +20,6 @@ import static com.github.guyapooye.hubble.Hubble.SPACE;
 public final class HubbleClient {
 
     public static final ResourceLocation PLANET = Hubble.path("planet");
-    public static final ResourceLocation SUN_MARCH = Hubble.path("sun_march");
-    public static final ResourceLocation SUN_CAST = Hubble.path("sun_cast");
     public static final ResourceLocation SUN = Hubble.path("sun");
     public static final ResourceLocation RENDERTYPE_PLANET = Hubble.path("rendertype/rendertype_planet");
     public static final ResourceLocation CELESTIAL_OBJECT = Hubble.path("celestial_object");

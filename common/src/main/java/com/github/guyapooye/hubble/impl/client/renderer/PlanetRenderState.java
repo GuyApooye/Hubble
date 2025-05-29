@@ -2,8 +2,8 @@ package com.github.guyapooye.hubble.impl.client.renderer;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
-import com.github.guyapooye.hubble.impl.body.PlanetBody;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
+import com.github.guyapooye.hubble.impl.body.PlanetBody;
 import com.mojang.blaze3d.vertex.*;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.vertex.VertexArray;
@@ -38,6 +38,7 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
     public void render(MatrixStack matrixStack, Camera camera) {
         IRenderState.super.render(matrixStack, camera);
         VertexArray vertexArray = VertexArray.create();
+
         vertexArray.upload(buildPlanet(position, dimensions, rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
         RenderType planet = HubbleRenderType.planet(texture);
         vertexArray.drawWithRenderType(planet);

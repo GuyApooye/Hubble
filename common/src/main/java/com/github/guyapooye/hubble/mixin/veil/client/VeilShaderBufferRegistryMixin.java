@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.mixin.veil;
+package com.github.guyapooye.hubble.mixin.veil.client;
 
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.registry.VeilShaderBufferRegistry;

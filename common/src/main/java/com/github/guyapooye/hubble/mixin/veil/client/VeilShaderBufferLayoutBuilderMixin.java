@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.mixin.veil;
+package com.github.guyapooye.hubble.mixin.veil.client;
 
 import com.github.guyapooye.hubble.ext.VeilShaderBufferLayoutBuilderExtension;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;

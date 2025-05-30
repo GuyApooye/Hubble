@@ -43,7 +43,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newSun.setPosition(new Vector3f(0.0f));
             newSun.setDimensions(new Vector3f(1.0f));
             newSun.setRotation(new Quaterniond());
-            newSun.setColor(new Vector3f(1.0f,0.325f,0.24f));
+            newSun.setColor(new Vector3f(1.0f,0.405f,0.195f));
             newSun.setIntensity(100.0f);
             sunObjects.put(newSun, new ImBoolean(true));
         }

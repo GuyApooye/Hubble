@@ -42,14 +42,27 @@ bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 m
     return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near);
 }
 
+//float depthSampleToWorldDepth(in float depthSample) {
+//    float f = depthSample * 2.0 - 1.0;
+//    return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
+//}
+
 float depthSampleToWorldDepth(in float depthSample) {
     float f = depthSample * 2.0 - 1.0;
-    return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
+    return 2.0 * 0.05 * 10000.0 / (10000.0 + 0.05 - f * (10000.0 - 0.05));
 }
 
-vec4 raymarch(in vec3 ro, in vec3 rd, in int i, in float depth) {
+//float worldDepthToDepthSample(in float worldDepth) {
+//    return 0.5-0.5*(2*VeilCamera.NearPlane*VeilCamera.FarPlane/worldDepth-VeilCamera.FarPlane-VeilCamera.NearPlane)/(VeilCamera.FarPlane-VeilCamera.NearPlane);
+//}
 
-    float total = 0.0;
+float worldDepthToDepthSample(in float worldDepth) {
+    return 0.5-0.5*(2*0.05*10000.0/worldDepth-10000.0-0.05)/(10000.0-0.05);
+}
+
+float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distTraveled) {
+
+    distTraveled = 0.0;
 
     vec3 pos = SunData.Pos[i];
     vec3 dims = SunData.Dims[i];
@@ -61,20 +74,20 @@ vec4 raymarch(in vec3 ro, in vec3 rd, in int i, in float depth) {
 
     float stepDistance = .0;
 
-    for(int j = 0; j < MAX_STEPS && total < MAX_DIST; ++j) {
+    for(int j = 0; j < MAX_STEPS && distTraveled < MAX_DIST; ++j) {
 
-        if (total >= depth) return vec4(0.0);
+        if (distTraveled >= depth) break;
 
-        stepDistance = sdRotatedBox(ro + rd * total, pos, dims, rot);
+        stepDistance = sdRotatedBox(ro + rd * distTraveled, pos, dims, rot);
 
         glow += getGlow(stepDistance, size, intensity);
 
-        if(stepDistance <= 1e-5 || glow >= 3) return vec4(SunData.Color[i],1.0)*min(glow,3.0);
+        if(stepDistance <= 1e-5 || glow >= 3) break;
 
-        total += stepDistance;
+        distTraveled += stepDistance;
     }
 
-    return vec4(SunData.Color[i],1.0) * min(glow,3.0);
+    return glow;
 }
 
 bool raytrace(in vec3 ro, in vec3 rd, in int i, in int j, in float depth, out float dist, out vec4 color) {
@@ -103,14 +116,12 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
 }
 
-bool calculate(in vec3 ro, in vec3 rd, in float depth, out vec4 hitColor, out vec4 glowColor) {
+bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out vec4 glowColor) {
 
     if (SunData.Size <= 0) return false;
 
     glowColor = vec4(0.0);
     hitColor = vec4(0.0);
-
-    float closestDistance = 100000.0;
 
     int hitIndex = -1;
 
@@ -120,14 +131,14 @@ bool calculate(in vec3 ro, in vec3 rd, in float depth, out vec4 hitColor, out ve
 
         vec4 color = vec4(0.0);
 
-        bool hit = raytrace(ro, rd, i, closestDistance, dist, color);
+        bool hit = raytrace(ro, rd, i, depth, dist, color);
 
 
         if (hit) {
-            if (closestDistance > dist) {
+            if (depth > dist) {
                 hitColor = color;
                 hitIndex = i;
-                closestDistance = dist;
+                depth = dist;
             }
             continue;
         }
@@ -140,7 +151,16 @@ bool calculate(in vec3 ro, in vec3 rd, in float depth, out vec4 hitColor, out ve
 
         float distTraveled = 0.0;
 
-        glowColor += raymarch(ro, rd, i, closestDistance);
+        float glow = raymarch(ro, rd, i, depth, distTraveled);
+
+        if (glow >= 3 && distTraveled <= depth) {
+            hitIndex = i;
+            depth = distTraveled;
+            hitColor = vec4(SunData.Color[i]*min(glow,3.0),1.0);
+            continue;
+        }
+
+        glowColor += vec4(SunData.Color[i],1.0) * min(glow,3.0);
 
     }
 
@@ -150,7 +170,9 @@ bool calculate(in vec3 ro, in vec3 rd, in float depth, out vec4 hitColor, out ve
 void main() {
 
     fragColor = texture(DiffuseSampler0, texCoord);
-    float depth = texture(DiffuseDepthSampler, texCoord).r;
+    gl_FragDepth = texture(DiffuseDepthSampler, texCoord).r;
+
+    float depth = depthSampleToWorldDepth(gl_FragDepth);
     vec3 camera = VeilCamera.CameraPosition;
     vec3 rd = viewDirFromUv(texCoord);
 
@@ -163,12 +185,15 @@ void main() {
 
     bool hit = calculate(camera, rd, depth, color, glowColor);
 
-    if (hit) fragColor = color;
+    if (hit) {
+        fragColor = color;
+        gl_FragDepth = worldDepthToDepthSample(depth);
+    }
 
     glowColor.xyz *= noise;
 
     glowColor.a = clamp(glowColor.a,0.0,1.0);
 
-    fragColor = fragColor * (1-glowColor.a) + glowColor;
+    fragColor = fragColor + glowColor;
 
 }

@@ -19,8 +19,10 @@ import static com.github.guyapooye.hubble.Hubble.SPACE;
 
 public final class HubbleClient {
 
+    private static final Minecraft mc = Minecraft.getInstance();
     public static final ResourceLocation PLANET = Hubble.path("planet");
     public static final ResourceLocation SUN = Hubble.path("sun");
+    public static final ResourceLocation SUN_FB = Hubble.path("sun_fb");
     public static final ResourceLocation RENDERTYPE_PLANET = Hubble.path("rendertype/rendertype_planet");
     public static final ResourceLocation CELESTIAL_OBJECT = Hubble.path("celestial_object");
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -31,7 +33,7 @@ public final class HubbleClient {
 
         VeilEventPlatform.INSTANCE.onVeilRenderLevelStage((stage, levelRenderer, bufferSource, matrixStack, matrix4fc, matrix4fc1, i, deltaTracker, camera, frustum) -> {
             if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-                if (Minecraft.getInstance().level.dimension().location().equals(SPACE)) {
+                if (HubbleUtil.shouldExecuteSpace(mc.level.dimension())) {
                     HubbleRenderer renderer = HubbleRenderer.getInstance();
 
                     renderer.preRender();

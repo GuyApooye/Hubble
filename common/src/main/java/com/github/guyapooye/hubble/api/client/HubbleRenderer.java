@@ -10,6 +10,7 @@ import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.client.render.vertex.VertexArray;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
@@ -32,7 +33,6 @@ public final class HubbleRenderer implements NativeResource {
 
     @ApiStatus.Internal
     public static void bootstrap() {
-        SunRenderState.setVertexArray(VertexArray.create());
     }
 
     public static HubbleRenderer getInstance() {
@@ -61,7 +61,10 @@ public final class HubbleRenderer implements NativeResource {
     public void render(MatrixStack matrixStack, Camera camera) {
 
         PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
-        if (!HubbleClientManager.getObjectInspector().disableSuns()) postManager.runPipeline(postManager.getPipeline(SUN));
+        boolean renderFab = Minecraft.getInstance().levelRenderer.getTranslucentTarget() != null;
+        if (!HubbleClientManager.getObjectInspector().disableSuns()) {
+            postManager.runPipeline(postManager.getPipeline(SUN));
+        }
 
         for (ImplicitRenderStateHolder data : objectsToRender.values()) {
             data.value().render(matrixStack, camera);

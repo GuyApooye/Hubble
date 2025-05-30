@@ -14,8 +14,14 @@
     {
       "type": "veil:copy",
       "in": "hubble:sun",
+      "out": "minecraft:translucent",
+      "color": true,
+      "depth": true
+    },
+    {
+      "type": "veil:copy",
+      "in": "hubble:sun",
       "out": "minecraft:main",
-      "clear": true,
       "color": false,
       "depth": true
     },
@@ -23,7 +29,7 @@
       "type": "veil:copy",
       "in": "hubble:sun",
       "out": "veil:post",
-      "clear": true,
+      "clear": false,
       "depth": true
     }
   ],

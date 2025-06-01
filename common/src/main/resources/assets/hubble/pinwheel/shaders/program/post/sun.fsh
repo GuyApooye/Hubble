@@ -11,7 +11,7 @@ in float fragDist;
 out vec4 fragColor;
 
 float getGlow(in float dist, float size, float intensity){
-    return pow(size/(250.0*dist), 0.8);
+    return pow(size/(250.0*dist), 0.7);
 }
 
 float sdBox(in vec3 p, in vec3 b ) {
@@ -177,7 +177,7 @@ void main() {
     vec3 rd = viewDirFromUv(texCoord);
 
     float noise = texture(NoiseSampler, 10.0*texCoord).r;
-    noise = 1 + (noise - 0.5) * .2;
+    noise = (noise - 0.5) * .1;
 
     vec4 glowColor = vec4(0.0);
 
@@ -190,10 +190,10 @@ void main() {
         gl_FragDepth = worldDepthToDepthSample(depth);
     }
 
-    glowColor.xyz *= noise;
+    glowColor.xyz *= 1+noise;
 
     glowColor.a = clamp(glowColor.a,0.0,1.0);
 
-    fragColor = fragColor + glowColor;
+    fragColor = fragColor*(1.0-glowColor.a/3.0) + glowColor;
 
 }

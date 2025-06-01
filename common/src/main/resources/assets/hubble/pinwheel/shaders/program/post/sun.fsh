@@ -42,23 +42,23 @@ bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 m
     return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near);
 }
 
-//float depthSampleToWorldDepth(in float depthSample) {
-//    float f = depthSample * 2.0 - 1.0;
-//    return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
-//}
-
 float depthSampleToWorldDepth(in float depthSample) {
     float f = depthSample * 2.0 - 1.0;
-    return 2.0 * 0.05 * 10000.0 / (10000.0 + 0.05 - f * (10000.0 - 0.05));
+    return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
 }
 
-//float worldDepthToDepthSample(in float worldDepth) {
-//    return 0.5-0.5*(2*VeilCamera.NearPlane*VeilCamera.FarPlane/worldDepth-VeilCamera.FarPlane-VeilCamera.NearPlane)/(VeilCamera.FarPlane-VeilCamera.NearPlane);
+//float depthSampleToWorldDepth(in float depthSample) {
+//    float f = depthSample * 2.0 - 1.0;
+//    return 2.0 * 0.05 * 10000.0 / (10000.0 + 0.05 - f * (10000.0 - 0.05));
 //}
 
 float worldDepthToDepthSample(in float worldDepth) {
-    return 0.5-0.5*(2*0.05*10000.0/worldDepth-10000.0-0.05)/(10000.0-0.05);
+    return 0.5-0.5*(2*VeilCamera.NearPlane*VeilCamera.FarPlane/worldDepth-VeilCamera.FarPlane-VeilCamera.NearPlane)/(VeilCamera.FarPlane-VeilCamera.NearPlane);
 }
+
+//float worldDepthToDepthSample(in float worldDepth) {
+//    return 0.5-0.5*(2*0.05*10000.0/worldDepth-10000.0-0.05)/(10000.0-0.05);
+//}
 
 float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distTraveled) {
 
@@ -94,21 +94,21 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in int j, in float depth, out fl
 
     float near = 0.0;
 
-    bool hit = iRotatedBox(ro, rd, SunData.Pos[i], SunData.Dims[i]*(1.0-0.15*j), SunData.Rot[i], near);
+    bool hit = iRotatedBox(ro, rd, SunData.Pos[i], SunData.Dims[i]*(1.0-0.12*j), SunData.Rot[i], near);
 
     if (near >= depth) return false;
 
     if (!hit) return false;
 
     dist = near;
-    color = vec4(SunData.Color[i], 1.0) * ((j/8.0)+1) * 3.0;
+    color = vec4(SunData.Color[i], 1.0) * ((j/12.0)+1) * 3.0;
     return true;
 
 }
 
 bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, out vec4 color) {
 
-    for (int j = 3; j >= 0; --j) {
+    for (int j = 3; j >= 1; --j) {
        if (raytrace(ro, rd, i, j, depth, dist, color)) return true;
     }
 
@@ -187,6 +187,7 @@ void main() {
 
     if (hit) {
         fragColor = color;
+        noise = 0;
         gl_FragDepth = worldDepthToDepthSample(depth);
     }
 

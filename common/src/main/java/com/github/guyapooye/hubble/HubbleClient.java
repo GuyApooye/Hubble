@@ -1,21 +1,20 @@
 package com.github.guyapooye.hubble;
 
 import com.github.guyapooye.hubble.api.client.HubbleClientManager;
-import com.github.guyapooye.hubble.client.editor.HubbleObjectInspector;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.client.shader.preprocessor.HubbleDependenciesPreProcessor;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
-import foundry.veil.Veil;
-import foundry.veil.VeilClient;
-import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.util.Lazy;
+import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
-
-import static com.github.guyapooye.hubble.Hubble.SPACE;
 
 public final class HubbleClient {
 
@@ -26,6 +25,8 @@ public final class HubbleClient {
     public static final ResourceLocation RENDERTYPE_PLANET = Hubble.path("rendertype/rendertype_planet");
     public static final ResourceLocation CELESTIAL_OBJECT = Hubble.path("celestial_object");
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Lazy<KeyMapping> ROLL = Lazy.lazy(() -> new KeyMapping("key.hubble.roll", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, "category.hubble.main"));
+    public static final Lazy<KeyMapping> ROLL_INVERSE = Lazy.lazy(() -> new KeyMapping("key.hubble.inverse_roll", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_X, "category.hubble.main"));
 
     public static void initClient() {
 
@@ -57,4 +58,10 @@ public final class HubbleClient {
             HubbleRenderer.getInstance().close();
         });
     }
+
+    @ApiStatus.Internal
+    public static void rollKeyBindPressed(boolean inverse) {
+
+    }
+
 }

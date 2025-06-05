@@ -114,6 +114,11 @@ public abstract class EntityMixin implements EntityExtension {
     }
 
     @Override
+    public void hubble$roll(float angle) {
+        hubble$rotation.rotateZ(-angle);
+    }
+
+    @Override
     public boolean hubble$canSpaceWalk() {
         return true;
     }

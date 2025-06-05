@@ -6,7 +6,6 @@
   "client": [
     "swim.client.CameraMixin",
     "swim.client.LivingEntityRendererMixin",
-    "swim.client.LocalPlayerMixin",
     "swim.client.PlayerRendererMixin",
     "world.DimensionSpecialEffectsMixin",
     "world.client.LevelRendererMixin"

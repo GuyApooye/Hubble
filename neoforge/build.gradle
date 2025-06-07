@@ -7,6 +7,18 @@ architectury {
     neoForge()
 }
 
+loom {
+//    accessWidenerPath = project.(":common").loom.accessWidenerPath
+//
+//    forge {
+//        mixinConfig("technomancy-common.mixins.json")
+//        mixinConfig("technomancy.mixins.json")
+//
+//        convertAccessWideners = true
+//        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+//    }
+}
+
 configurations {
     common {
         canBeResolved = true

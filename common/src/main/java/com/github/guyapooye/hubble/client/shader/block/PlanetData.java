@@ -2,19 +2,24 @@ package com.github.guyapooye.hubble.client.shader.block;
 
 import com.github.guyapooye.hubble.ext.VeilShaderBufferLayoutBuilderExtension;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
+import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
+import foundry.veil.api.client.render.texture.SimpleArrayTexture;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.system.NativeResource;
 
 @SuppressWarnings("unchecked")
-public class PlanetData {
+public class PlanetData /*implements NativeResource */{
 
     public static final int SIZE = 25;
     private Vector3f[] pos = new Vector3f[SIZE];
     private Vector3f[] dims = new Vector3f[SIZE];
     private Matrix4f[] rot = new Matrix4f[SIZE];
+//    private SimpleArrayTexture textures = new SimpleArrayTexture();
     private int size = 0;
 
 
@@ -127,4 +132,23 @@ public class PlanetData {
         size++;
         return true;
     }
+
+//    public SimpleArrayTexture getTextures() {
+//        return textures;
+//    }
+//
+//    public void setTextures(ResourceLocation... textures) {
+//        free();
+//        this.textures = new SimpleArrayTexture(textures);
+//        this.textures.setFilter(false, false);
+//    }
+//
+//    public void bindTextures() {
+//        textures.bind();
+//    }
+//
+//    @Override
+//    public void free() {
+//        textures.close();
+//    }
 }

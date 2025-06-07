@@ -1,8 +1,10 @@
 package com.github.guyapooye.hubble.api.client;
 
+import com.github.guyapooye.hubble.HubbleClient;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
+import com.github.guyapooye.hubble.ext.EntityExtension;
 import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.MatrixStack;
@@ -40,6 +42,16 @@ public final class HubbleRenderer implements NativeResource {
     }
 
     public void preRender() {
+
+        EntityExtension player = ((EntityExtension) Minecraft.getInstance().player);
+
+        while (ROLL.get().consumeClick()) {
+            player.hubble$roll(-0.02f);
+        }
+        while (ROLL_INVERSE.get().consumeClick()) {
+            player.hubble$roll(0.02f);
+        }
+
         objectsToRender.clear();
         planetData.clearNoUpdate();
         sunData.clearNoUpdate();

@@ -4,14 +4,16 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-    "swim.client.MouseHandlerMixin",
+    "swim.client.CameraMixin",
+    "swim.client.LivingEntityRendererMixin",
+    "swim.client.PlayerRendererMixin",
     "world.DimensionSpecialEffectsMixin",
     "world.client.LevelRendererMixin"
   ],
   "mixins": [
     "swim.EntityMixin",
+    "swim.LivingEntityMixin",
     "swim.PlayerMixin",
-    "swim.SmoothSwimmingMoveControlMixin",
     "veil.client.VeilShaderBufferLayoutBuilderMixin",
     "veil.client.VeilShaderBufferRegistryMixin"
   ],

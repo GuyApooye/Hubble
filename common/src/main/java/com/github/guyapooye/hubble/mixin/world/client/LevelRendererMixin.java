@@ -3,6 +3,7 @@ package com.github.guyapooye.hubble.mixin.world.client;
 import com.github.guyapooye.hubble.HubbleUtil;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
@@ -10,11 +11,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,9 +31,19 @@ public class LevelRendererMixin {
     @Unique
     private static final Vector3f WHITE = new Vector3f(1.0f,1.0f,1.0f);
 
+
     @Shadow @Nullable private ClientLevel level;
 
     @Shadow @Nullable private VertexBuffer starBuffer;
+
+
+//    @Nullable private VertexArray starsVertexArray;
+//
+//    @Unique @Nullable private ByteBuffer cachedStarsIndexBuffer;
+//    @Unique @Nullable private ByteBuffer cachedStarsVertexBuffer;
+
+//    @Unique
+//    @Nullable private BufferBuilder starsChachedBufferBuilder;
 
     @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/FogRenderer;setupColor(Lnet/minecraft/client/Camera;FLnet/minecraft/client/multiplayer/ClientLevel;IF)V"))
     private void clearFog(Camera camera, float f, ClientLevel clientLevel, int i, float g, Operation<Void> original) {
@@ -45,6 +53,69 @@ public class LevelRendererMixin {
         }
         RenderSystem.clearColor(0.0f,0.0f,0.0f,0.0f);
     }
+//
+//    @SuppressWarnings("ForRemoval")
+//    @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderSky(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;FLnet/minecraft/client/Camera;ZLjava/lang/Runnable;)V"))
+//    private void onlyRenderStars(LevelRenderer instance, Matrix4f matrix4f, Matrix4f matrix4f2, float f, Camera camera, boolean bl, Runnable runnable, Operation<Void> original) {
+//
+////        if (starsVertexArray == null) starsVertexArray = VertexArray.create();
+//
+//        if (!HubbleUtil.shouldExecuteSpace(level.dimension())) {
+//            original.call(instance, matrix4f, matrix4f2, f, camera, bl, runnable);
+//            return;
+//        }
+//        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+//        FogRenderer.setupNoFog();
+//
+//        if (starsChachedBufferBuilder != null) {
+////            RenderSystem.assertOnRenderThread();
+////            VertexArrayBuilder builder = starsVertexArray.editFormat();
+//
+////            int indexCount = 4*1500;
+//
+////            int vertexBuffer = starsVertexArray.getOrCreateBuffer(VERTEX_BUFFER);
+////            starsVertexArray.uploadVertexBuffer(vertexBuffer, cachedStarsVertexBuffer, VertexArray.DrawUsage.STATIC.getGlType());
+////            builder.applyFrom(VERTEX_BUFFER, vertexBuffer, 0, DefaultVertexFormat.POSITION);
+//
+////            if (cachedStarsIndexBuffer != null) {
+////                starsVertexArray.uploadIndexBuffer(cachedStarsIndexBuffer);
+////            } else {
+////                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS).bind(indexCount);
+////            }
+////            starsVertexArray.setIndexCount(indexCount, VertexArray.IndexType.BYTE);
+////            starsVertexArray.setDrawMode(VertexFormat.Mode.QUADS);
+//
+////            starsVertexArray.bind();
+////            ShaderInstance shader = GameRenderer.getPositionShader();
+////            shader.setDefaultUniforms(VertexFormat.Mode.QUADS, matrix4f, matrix4f2, Minecraft.getInstance().getWindow());
+////            shader.apply();
+////            starsVertexArray.draw();
+////            shader.clear();
+////            VertexArray.unbind();
+//            this.starBuffer.bind();
+//            this.starBuffer.upload(starsChachedBufferBuilder.storeMesh());
+//            this.starBuffer.drawWithShader(matrix4f, matrix4f2, GameRenderer.getPositionShader());
+//            VertexBuffer.unbind();
+//            return;
+//        }
+//
+//        this.starBuffer.bind();
+//        this.starBuffer.drawWithShader(matrix4f, matrix4f2, GameRenderer.getPositionShader());
+//        VertexBuffer.unbind();
+//    }
+//
+//    @Inject(method = "drawStars", at = @At("HEAD"), cancellable = true)
+//    private void dontDrawStarsIfCached(Tesselator tesselator, CallbackInfoReturnable<MeshData> cir) {
+//        if (starsChachedBufferBuilder != null) cir.setReturnValue(null);
+//    }
+//
+//    @Inject(method = "drawStars", at = @At("RETURN"))
+//    private void cacheStars(Tesselator tesselator, CallbackInfoReturnable<MeshData> cir, @Local BufferBuilder builder) {
+////        ByteBuffer indexBuffer = original.indexBuffer();
+////        if (indexBuffer != null) cachedStarsIndexBuffer = indexBuffer.duplicate();
+////        cachedStarsVertexBuffer = original.vertexBuffer().duplicate();
+//        starsChachedBufferBuilder = builder;
+//    }
 
     @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderSky(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;FLnet/minecraft/client/Camera;ZLjava/lang/Runnable;)V"))
     private void onlyRenderStars(LevelRenderer instance, Matrix4f matrix4f, Matrix4f matrix4f2, float f, Camera camera, boolean bl, Runnable runnable, Operation<Void> original) {
@@ -59,43 +130,4 @@ public class LevelRendererMixin {
         VertexBuffer.unbind();
     }
 
-//    @Inject(method = "drawStars", at = @At("HEAD"), cancellable = true)
-//    private void drawHubbleStars(Tesselator tesselator, CallbackInfoReturnable<MeshData> cir) {
-//        RandomSource randomSource = RandomSource.create(10842L);
-//        BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-//
-//        for(int i = 0; i < 1500; ++i) {
-//            float x = randomSource.nextFloat() * 2.0F - 1.0F;
-//            float y = randomSource.nextFloat() * 2.0F - 1.0F;
-//            float z = randomSource.nextFloat() * 2.0F - 1.0F;
-//            float scale = 0.25F + randomSource.nextFloat() * 0.75F;
-//            float length = Mth.lengthSquared(x, y, z);
-//            if (!(length <= 0.010000001F) && !(length >= 1.0F)) {
-//                float t = randomSource.nextFloat();
-//                float intensity = randomSource.nextFloat();
-//                intensity *= intensity;
-//                intensity *= intensity;
-//                Vector3f color = new Vector3f();
-//                if (t > 0.5) {
-//                    t = 2 * t - 1;
-//                    t *= t * 0.8f;
-//                    WHITE.lerp(ORANGE, t, color).mul(intensity);
-//                } else {
-//                    t = 2 * t;
-//                    t *= t * 0.8f;
-//                    WHITE.lerp(BLUE, t, color).mul(intensity);
-//                }
-//
-//                Vector3f vector3f = (new Vector3f(x, y, z)).normalize(100.0F);
-//                float angle = (float)(randomSource.nextDouble() * Mth.PI * 2.0);
-//                Quaternionf quaternionf = (new Quaternionf()).rotateTo(new Vector3f(0.0F, 0.0F, -1.0F), vector3f).rotateZ(angle);
-//                bufferBuilder.addVertex(vector3f.add((new Vector3f(scale, -scale, 0.0F)).rotate(quaternionf))).setColor(color.x, color.y, color.z, 1.0f);
-//                bufferBuilder.addVertex(vector3f.add((new Vector3f(scale, scale, 0.0F)).rotate(quaternionf))).setColor(color.x, color.y, color.z, 1.0f);
-//                bufferBuilder.addVertex(vector3f.add((new Vector3f(-scale, scale, 0.0F)).rotate(quaternionf))).setColor(color.x, color.y, color.z, 1.0f);
-//                bufferBuilder.addVertex(vector3f.add((new Vector3f(-scale, -scale, 0.0F)).rotate(quaternionf))).setColor(color.x, color.y, color.z, 1.0f);
-//            }
-//        }
-//
-//        cir.setReturnValue(bufferBuilder.buildOrThrow());
-//    }
 }

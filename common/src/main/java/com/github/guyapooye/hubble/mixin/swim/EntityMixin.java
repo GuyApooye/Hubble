@@ -2,6 +2,7 @@ package com.github.guyapooye.hubble.mixin.swim;
 
 import com.github.guyapooye.hubble.HubbleUtil;
 import com.github.guyapooye.hubble.ext.EntityExtension;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -37,7 +38,7 @@ public abstract class EntityMixin implements EntityExtension {
         return original || (hubble$canSpaceWalk() && HubbleUtil.shouldSwimInSpace(level.dimension()));
     }
 
-    @ModifyReturnValue(method = "isNoGravity", at = @At(value = "RETURN"))
+    @ModifyExpressionValue(method = "getGravity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isNoGravity()Z"))
     private boolean noGravityInSpace(boolean original) {
         return original || (hubble$canSpaceWalk() && HubbleUtil.shouldSwimInSpace(level.dimension()));
     }

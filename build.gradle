@@ -24,11 +24,11 @@ subprojects {
     }
 
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
+        maven {
+            name = "Valkyrien Skies Internal"
+            url = 'https://maven.valkyrienskies.org'
+        }
+
         maven {
             name = 'BlameJared Maven (CrT / Bookshelf)'
             url = 'https://maven.blamejared.com'
@@ -44,6 +44,12 @@ subprojects {
             exclude group: 'org.lwjgl'
             exclude group: 'org.lwjgl.lwjgl'
         }
+
+        implementation("org.valkyrienskies.core:api:$vs_core_version") { transitive = false }
+        implementation("org.valkyrienskies.core:api-game:$vs_core_version") { transitive = false }
+        implementation("org.valkyrienskies.core:util:$vs_core_version") { transitive = false }
+        implementation("org.valkyrienskies.core:impl:$vs_core_version") { transitive = false }
+
 //        implementation "io.github.ocelot:glsl-processor:${glsl_processor_version}"
     }
 

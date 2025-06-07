@@ -101,7 +101,7 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in int j, in float depth, out fl
     if (!hit) return false;
 
     dist = near;
-    color = vec4(SunData.Color[i], 1.0) * ((j/12.0)+1) * 3.0;
+    color = vec4(SunData.Color[i], 1.0) * ((j/8.0)+1) * 3.0;
     return true;
 
 }

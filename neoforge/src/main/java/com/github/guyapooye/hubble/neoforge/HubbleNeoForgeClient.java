@@ -26,14 +26,4 @@ public final class HubbleNeoForgeClient {
         event.register(ROLL.get());
         event.register(ROLL_INVERSE.get());
     }
-
-    public void onClientTick(ClientTickEvent.Post event) {
-        while (ROLL.get().isDown()) {
-            rollKeyBindPressed(false);
-        }
-
-        while (ROLL_INVERSE.get().isDown()) {
-            rollKeyBindPressed(true);
-        }
-    }
 }

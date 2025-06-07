@@ -12,7 +12,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.util.Lazy;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
@@ -21,7 +20,6 @@ public final class HubbleClient {
     private static final Minecraft mc = Minecraft.getInstance();
     public static final ResourceLocation PLANET = Hubble.path("planet");
     public static final ResourceLocation SUN = Hubble.path("sun");
-    public static final ResourceLocation SUN_FB = Hubble.path("sun_fb");
     public static final ResourceLocation RENDERTYPE_PLANET = Hubble.path("rendertype/rendertype_planet");
     public static final ResourceLocation CELESTIAL_OBJECT = Hubble.path("celestial_object");
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -57,11 +55,6 @@ public final class HubbleClient {
         VeilEventPlatform.INSTANCE.onFreeNativeResources(() -> {
             HubbleRenderer.getInstance().close();
         });
-    }
-
-    @ApiStatus.Internal
-    public static void rollKeyBindPressed(boolean inverse) {
-
     }
 
 }

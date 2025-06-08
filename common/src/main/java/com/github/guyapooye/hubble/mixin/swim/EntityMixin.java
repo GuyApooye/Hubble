@@ -64,8 +64,13 @@ public abstract class EntityMixin implements EntityExtension {
         return original.call(f,g,h);
     }
 
-    @Inject(method = "getViewVector", at = @At("RETURN"), cancellable = true)
-    private void returnSpaceViewVector(float f, CallbackInfoReturnable<Vec3> cir) {
+    @Inject(method = "getViewVector", at = @At("HEAD"), cancellable = true)
+    private void returnSpaceViewVector0(float f, CallbackInfoReturnable<Vec3> cir) {
+        if (hubble$canSpaceWalk() && HubbleUtil.shouldSwimInSpace(level.dimension())) cir.setReturnValue(new Vec3(hubble$getViewRotation(f).transform(new Vector3f(0.0f,0.0f,-1.0f))));
+    }
+
+    @Inject(method = "calculateViewVector", at = @At("HEAD"), cancellable = true)
+    private void returnSpaceViewVector1(float f, float g, CallbackInfoReturnable<Vec3> cir) {
         if (hubble$canSpaceWalk() && HubbleUtil.shouldSwimInSpace(level.dimension())) cir.setReturnValue(new Vec3(hubble$getViewRotation(f).transform(new Vector3f(0.0f,0.0f,-1.0f))));
     }
 

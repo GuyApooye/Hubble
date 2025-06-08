@@ -8,6 +8,7 @@
     "swim.client.LivingEntityRendererMixin",
     "swim.client.PlayerRendererMixin",
     "world.DimensionSpecialEffectsMixin",
+    "world.client.ClientLevelMixin",
     "world.client.LevelRendererMixin"
   ],
   "mixins": [

@@ -2,6 +2,7 @@ package com.github.guyapooye.hubble.impl.body;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.body.CelestialBody;
+import com.github.guyapooye.hubble.api.effects.AtmosphereSettings;
 import com.github.guyapooye.hubble.impl.client.renderer.PlanetRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -11,9 +12,10 @@ import org.joml.Vector3f;
 
 public class PlanetBody extends CelestialBody<PlanetBody> {
 
-    protected Quaterniond rotation;
-    protected Vector3f dimensions;
-    protected ResourceLocation texture;
+    private Quaterniond rotation;
+    private Vector3f dimensions;
+    private ResourceLocation texture;
+    private AtmosphereSettings atmosphere;
 
     public PlanetBody(ResourceLocation id, ResourceKey<Level> dimension) {
         super(id, dimension);
@@ -46,5 +48,13 @@ public class PlanetBody extends CelestialBody<PlanetBody> {
     @Override
     public IRenderState<PlanetBody> createRenderState() {
         return new PlanetRenderState(this);
+    }
+
+    public AtmosphereSettings getAtmosphere() {
+        return atmosphere;
+    }
+
+    public void setAtmosphere(AtmosphereSettings atmosphere) {
+        this.atmosphere = atmosphere;
     }
 }

@@ -2,6 +2,7 @@ package com.github.guyapooye.hubble.impl.client.renderer;
 
 import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
+import com.github.guyapooye.hubble.api.effects.AtmosphereSettings;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
 import com.github.guyapooye.hubble.impl.body.PlanetBody;
 import com.mojang.blaze3d.vertex.*;
@@ -16,10 +17,11 @@ import org.joml.*;
 import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
 
 public class PlanetRenderState implements IRenderState<PlanetBody> {
-    protected Vector3f position;
-    protected Vector3f dimensions;
-    protected Quaterniond rotation;
-    protected ResourceLocation texture;
+    private Vector3f position;
+    private Vector3f dimensions;
+    private Quaterniond rotation;
+    private ResourceLocation texture;
+    private AtmosphereSettings atmosphere;
 
     public PlanetRenderState(PlanetBody planet) {
         position = planet.getPosition();
@@ -88,14 +90,16 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
         dimensions.lerp(load.getDimensions(), partialTicks);
         rotation.slerp(load.getRotation(), partialTicks);
         texture = load.getTexture();
+        atmosphere.update(load.getAtmosphere(), partialTicks);
     }
 
     @Override
     public void load(PlanetBody load) {
         IRenderState.super.load(load);
-        position = load.getPosition();
-        dimensions = load.getDimensions();
-        rotation = load.getRotation();
+        position.set(load.getPosition());
+        dimensions.set(load.getDimensions());
+        rotation.set(load.getRotation());
         texture = load.getTexture();
+        atmosphere.load(load.getAtmosphere());
     }
 }

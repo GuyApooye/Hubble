@@ -106,7 +106,7 @@ public abstract class EntityMixin implements EntityExtension {
 
     @Override
     public Quaternionf hubble$getViewRotation(float t) {
-        return hubble$rotation0.nlerp(hubble$rotation, t);
+        return hubble$rotation0.slerp(hubble$rotation, t);
     }
 
     @Override

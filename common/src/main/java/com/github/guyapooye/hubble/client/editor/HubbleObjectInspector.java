@@ -41,21 +41,21 @@ public class HubbleObjectInspector extends SingleWindowInspector {
         {
             newSun = new SunBody(Hubble.path("sun0"), null);
             newSun.setPosition(new Vector3f(0.0f));
-            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setDimensions(new Vector3f(25.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(1.0f,0.405f,0.195f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(true));
+            sunObjects.put(newSun, new ImBoolean(false));
         }
 
         {
             newSun = new SunBody(Hubble.path("sun1"), null);
             newSun.setPosition(new Vector3f(0.0f));
-            newSun.setDimensions(new Vector3f(1.0f));
+            newSun.setDimensions(new Vector3f(25.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.24f,0.325f,1.0f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(true));
+            sunObjects.put(newSun, new ImBoolean(false));
         }
 
         {
@@ -75,7 +75,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(1.0f,0.25f,0.25f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
         {
@@ -85,7 +85,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.2f,0.3f,1.0f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
         {
@@ -95,7 +95,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.2f,1.0f,0.2f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
         {
@@ -105,7 +105,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(1.0f,1.0f,0.225f));
             newSun.setIntensity(100.0f);
-            sunObjects.put(newSun, new ImBoolean(false));
+            sunObjects.put(newSun, new ImBoolean(true));
         }
 
     }

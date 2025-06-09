@@ -1,7 +1,6 @@
 package com.github.guyapooye.hubble.api.client;
 
 import com.github.guyapooye.hubble.HubbleClient;
-import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
@@ -27,12 +26,10 @@ public final class HubbleRenderer implements NativeResource {
     private final static HubbleRenderer instance = new HubbleRenderer();
     private final Map<ResourceLocation, ImplicitRenderStateHolder> objectsToRender = new HashMap<>();
     private final PlanetData planetData;
-    private final AtmosphereData atmosphereData;
     private final SunData sunData;
 
     private HubbleRenderer() {
         planetData = new PlanetData();
-        atmosphereData = new AtmosphereData();
         sunData = new SunData();
     }
 

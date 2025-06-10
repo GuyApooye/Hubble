@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -40,7 +41,7 @@ public abstract class EntityMixin implements EntityExtension {
 
     @ModifyExpressionValue(method = "getGravity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isNoGravity()Z"))
     private boolean noGravityInSpace(boolean original) {
-        return original || (hubble$canSpaceWalk() && HubbleUtil.shouldSwimInSpace(level.dimension()));
+        return original || (HubbleUtil.shouldSwimInSpace(level.dimension()));
     }
 
     @WrapOperation(method = "turn", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(FFF)F"))
@@ -126,6 +127,6 @@ public abstract class EntityMixin implements EntityExtension {
 
     @Override
     public boolean hubble$canSpaceWalk() {
-        return true;
+        return ((Entity)(Object)this instanceof LivingEntity);
     }
 }

@@ -16,7 +16,9 @@
     "swim.LivingEntityMixin",
     "swim.PlayerMixin",
     "veil.client.VeilShaderBufferLayoutBuilderMixin",
-    "veil.client.VeilShaderBufferRegistryMixin"
+    "veil.client.VeilShaderBufferRegistryMixin",
+    "world.entity.EntityMixin",
+    "world.entity.LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

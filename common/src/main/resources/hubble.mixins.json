@@ -15,6 +15,7 @@
     "swim.EntityMixin",
     "swim.LivingEntityMixin",
     "swim.PlayerMixin",
+    "veil.client.VeilShaderBindingProcessorMixin",
     "veil.client.VeilShaderBufferLayoutBuilderMixin",
     "veil.client.VeilShaderBufferRegistryMixin"
   ],

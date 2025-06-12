@@ -1,6 +1,6 @@
-package com.github.guyapooye.hubble.impl.client.renderer;
+package com.github.guyapooye.hubble.impl.client.render;
 
-import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.client.util.BoxRenderer;
 import com.github.guyapooye.hubble.impl.body.SunBody;
@@ -29,7 +29,7 @@ public class SunRenderState implements IRenderState<SunBody> {
     @Override
     public void setup() {
         IRenderState.super.setup();
-        HubbleRenderer.getInstance().getSunData().addValuesNoUpdate(position, dimensions.div(2, new Vector3f()), rotation.get(new Matrix4f()), color, intensity);
+        HubbleRenderer.getInstance().getSunData().addValues(position, dimensions.div(2, new Vector3f()), rotation.get(new Matrix4f()), color, intensity);
     }
 
     @Override

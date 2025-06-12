@@ -1,6 +1,6 @@
 package com.github.guyapooye.hubble.api.client.util;
 
-import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.body.CelestialBody;
 import net.minecraft.client.Minecraft;
 

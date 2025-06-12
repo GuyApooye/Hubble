@@ -23,8 +23,8 @@ public class SunData {
     public SunData() {}
 
     public static VeilShaderBufferLayout<SunData> createLayout() {
-        return ((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)
-                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, SunData::getPos)).hubble$vec3s("Dims", SIZE, SunData::getDims)).hubble$mat4s("Rot", SIZE, SunData::getRot)).hubble$mat4s("InvRot", SIZE, SunData::getInvRot)).hubble$vec3s("Color", SIZE, SunData::getColor)).hubble$f32s("Intensity", SIZE, SunData::getIntensity)).hubble$f32s("Length", SIZE, SunData::getLength).integer("Size", SunData::getSize).build();
+        return ((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>) ((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)((VeilShaderBufferLayoutBuilderExtension<SunData>)
+                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, SunData::getPos)).hubble$vec3s("Dims", SIZE, SunData::getDims)).hubble$mat4s("Rot", SIZE, SunData::getRot)).hubble$vec3s("Color", SIZE, SunData::getColor)).hubble$f32s("Intensity", SIZE, SunData::getIntensity)).hubble$f32s("Length", SIZE, SunData::getLength).integer("Size", SunData::getSize).build();
     }
 
     public Vector3f[] getPos() {
@@ -68,38 +68,23 @@ public class SunData {
         return size;
     }
 
-    private boolean setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
+    private void setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
         ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        if (block == null && size >= SIZE) return false;
+        if (block == null) throw new IllegalStateException("Sun data has not been initialized!");
+        if (size >= SIZE) throw new RuntimeException("Size of sun data cannot be greater than max size ("+SIZE+")");
         this.pos = pos.clone();
         this.dims = dims.clone();
         this.rot = rot.clone();
         this.color = color.clone();
         this.intensity = intensity.clone();
         this.size = size;
-        block.set(this);
-        VeilRenderSystem.bind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        return true;
-    }
-
-    private boolean setValuesNoUpdate(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, Vector3f[] color, Float[] intensity, int size) {
-        ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        if (block == null || size >= SIZE) return false;
-        this.pos = pos.clone();
-        this.dims = dims.clone();
-        this.rot = rot.clone();
-        this.color = color.clone();
-        this.intensity = intensity.clone();
-        this.size = size;
-        return true;
     }
 
     public void update() {
         ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        if (block != null) {
-            block.set(this);
-            VeilRenderSystem.bind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        }
+        if (block == null) throw new IllegalStateException("Sun data has not been initialized!");
+        block.set(this);
+        VeilRenderSystem.bind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
     }
 
     public void backup(SunData store) {
@@ -113,44 +98,28 @@ public class SunData {
 
     public void restore(SunData load) {
         ShaderBlock<SunData> block = VeilRenderSystem.getBlock((HubbleShaderBufferRegistry.LIGHT_DATA.get()));
-        if (block != null) {
-            this.pos = load.pos.clone();
-            this.dims = load.dims.clone();
-            this.rot = load.rot.clone();
-            this.color = load.color.clone();
-            this.intensity = load.intensity.clone();
-            this.size = load.size;
-            block.set(this);
-            VeilRenderSystem.bind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        }
-    }
-
-    public void clearNoUpdate() {
-        setValuesNoUpdate(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], new Vector3f[SIZE], new Float[SIZE], 0);
-    }
-
-    public boolean addValues(Vector3f pos, Vector3f dims, Matrix4f rot, Vector3f color, float intensity) {
-        ShaderBlock<SunData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        if (block == null || size >= SIZE) return false;
-        this.pos[size] = pos;
-        this.dims[size] = dims;
-        this.rot[size] = rot;
-        this.color[size] = color;
-        this.intensity[size] = intensity;
-        size++;
+        if (block == null) throw new IllegalStateException("Sun data has not been initialized!");
+        this.pos = load.pos.clone();
+        this.dims = load.dims.clone();
+        this.rot = load.rot.clone();
+        this.color = load.color.clone();
+        this.intensity = load.intensity.clone();
+        this.size = load.size;
         block.set(this);
         VeilRenderSystem.bind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
-        return true;
     }
 
-    public boolean addValuesNoUpdate(Vector3f pos, Vector3f dims, Matrix4f rot, Vector3f color, float intensity) {
-        if (size >= SIZE) return false;
+    public void clear() {
+        setValues(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], new Vector3f[SIZE], new Float[SIZE], 0);
+    }
+
+    public void addValues(Vector3f pos, Vector3f dims, Matrix4f rot, Vector3f color, float intensity) {
+        if (size >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
         this.pos[size] = pos;
         this.dims[size] = dims;
         this.rot[size] = rot;
         this.color[size] = color;
         this.intensity[size] = intensity;
         size++;
-        return true;
     }
 }

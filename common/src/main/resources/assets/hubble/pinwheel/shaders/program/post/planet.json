@@ -1,0 +1,7 @@
+{
+  "vertex": "veil:blit_screen",
+  "fragment": "hubble:post/planet",
+  "textures": {
+    "NoiseSampler": "hubble:textures/noise/blue_noise.png"
+  }
+}

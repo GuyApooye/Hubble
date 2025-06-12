@@ -6,12 +6,11 @@ uniform sampler2D NoiseSampler;
 #define MAX_DIST 10000.0
 
 in vec2 texCoord;
-in float fragDist;
 
 out vec4 fragColor;
 
 float getGlow(in float dist, float size, float intensity){
-    return pow(size/(250.0*dist), 0.7);
+    return pow(size/(250.0*dist), 0.65);
 }
 
 float sdBox(in vec3 p, in vec3 b ) {

@@ -2,7 +2,6 @@ package com.github.guyapooye.hubble.client.shader.block;
 
 import com.github.guyapooye.hubble.ext.VeilShaderBufferLayoutBuilderExtension;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
-import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
@@ -10,145 +9,99 @@ import foundry.veil.api.client.render.texture.SimpleArrayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.system.NativeResource;
 
 @SuppressWarnings("unchecked")
-public class PlanetData /*implements NativeResource */{
+public class PlanetData {
 
     public static final int SIZE = 25;
-    private Vector3f[] pos = new Vector3f[SIZE];
-    private Vector3f[] dims = new Vector3f[SIZE];
-    private Matrix4f[] rot = new Matrix4f[SIZE];
-//    private SimpleArrayTexture textures = new SimpleArrayTexture();
+    private Vector3f[] position = new Vector3f[SIZE];
+    private Vector3f[] dimensions = new Vector3f[SIZE];
+    private Matrix4f[] rotation = new Matrix4f[SIZE];
+    private ResourceLocation[] textures = new ResourceLocation[SIZE];
     private int size = 0;
-
 
     public PlanetData() {}
 
     public static VeilShaderBufferLayout<PlanetData> createLayout() {
-        return ((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)
-                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPos)).hubble$vec3s("Dims", SIZE, PlanetData::getDims)).hubble$mat4s("Rot", SIZE, PlanetData::getRot)).hubble$mat4s("InvRot", SIZE, PlanetData::getInvRot).integer("Size", PlanetData::getSize).build();
+        return (((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)
+                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPosition)).hubble$vec3s("Dims", SIZE, PlanetData::getDimensions)).hubble$mat4s("Rot", SIZE, PlanetData::getRotation).integer("Size", PlanetData::getSize)).build();
     }
 
-    private boolean setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, int dataSize) {
+    private void setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, ResourceLocation[] textures, int dataSize) {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        if (block == null && dataSize >= SIZE) return false;
-        this.pos = pos.clone();
-        this.dims = dims.clone();
-        this.rot = rot.clone();
+        if (block == null) throw new IllegalStateException("Planet data has not been initialized!");
+        if (size >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
+        this.position = pos.clone();
+        this.dimensions = dims.clone();
+        this.rotation = rot.clone();
+        this.textures = textures.clone();
         this.size = dataSize;
-        block.set(this);
-        VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        return true;
-    }
-
-    public boolean setValuesNoUpdate(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, int dataSize) {
-        ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        if (block == null && dataSize >= SIZE) return false;
-        this.pos = pos.clone();
-        this.dims = dims.clone();
-        this.rot = rot.clone();
-        this.size = dataSize;
-        return true;
     }
 
     public void update() {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        if (block != null) {
-            block.set(this);
-            VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        }
+        if (block == null) throw new IllegalStateException("Planet data has not been initialized!");
+        block.set(this);
+        VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
     }
 
     public void clear() {
-        setValues(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], 0);
-    }
-
-    public void clearNoUpdate() {
-        setValuesNoUpdate(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], 0);
+        setValues(new Vector3f[SIZE], new Vector3f[SIZE], new Matrix4f[SIZE], new ResourceLocation[SIZE], 0);
     }
 
     public void backup(PlanetData store) {
-        store.pos = this.pos.clone();
-        store.dims = this.dims.clone();
-        store.rot = this.rot.clone();
+        store.position = this.position.clone();
+        store.dimensions = this.dimensions.clone();
+        store.rotation = this.rotation.clone();
         store.size = this.size;
     }
 
     public void restore(PlanetData load) {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        if (block != null) {
-            this.pos = load.pos.clone();
-            this.dims = load.dims.clone();
-            this.rot = load.rot.clone();
-            this.size = load.size;
-            block.set(this);
-            VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        }
+        if (block == null) throw new IllegalStateException("Planet data has not been initialized!");
+        this.position = load.position.clone();
+        this.dimensions = load.dimensions.clone();
+        this.rotation = load.rotation.clone();
+        this.size = load.size;
+        block.set(this);
+        VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
     }
 
-    public Vector3f[] getPos() {
-        return pos;
+    public Vector3f[] getPosition() {
+        return position;
     }
 
-    public Vector3f[] getDims() {
-        return dims;
+    public Vector3f[] getDimensions() {
+        return dimensions;
     }
 
-    public Matrix4f[] getRot() {
-        return rot;
+    public Matrix4f[] getRotation() {
+        return rotation;
     }
 
     public Matrix4f[] getInvRot() {
         Matrix4f[] invRot = new Matrix4f[SIZE];
-        for (int i = 0; i < rot.length; i++) {
-            if (rot[i] == null) continue;
-            invRot[i] = rot[i].invert();
+        for (int i = 0; i < rotation.length; i++) {
+            if (rotation[i] == null) continue;
+            invRot[i] = rotation[i].invert();
         }
         return invRot;
+    }
+
+    public SimpleArrayTexture createArrayTexture() {
+        return new SimpleArrayTexture(textures);
     }
 
     public int getSize() {
         return size;
     }
 
-    public boolean addValues(Vector3f pos, Vector3f dims, Matrix4f rot) {
-        ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        if (block == null || size >= SIZE) return false;
-        this.pos[size] = pos;
-        this.dims[size] = dims;
-        this.rot[size] = rot;
+    public void addValues(Vector3f pos, Vector3f dims, Matrix4f rot, ResourceLocation texture) {
+        if (size >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
+        this.position[size] = pos;
+        this.dimensions[size] = dims;
+        this.rotation[size] = rot;
+        textures[size] = texture;
         size++;
-        block.set(this);
-        VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
-        return true;
     }
-
-    public boolean addValuesNoUpdate(Vector3f pos, Vector3f dims, Matrix4f rot) {
-        if (size >= SIZE) return false;
-        this.pos[size] = pos;
-        this.dims[size] = dims;
-        this.rot[size] = rot;
-        size++;
-        return true;
-    }
-
-//    public SimpleArrayTexture getTextures() {
-//        return textures;
-//    }
-//
-//    public void setTextures(ResourceLocation... textures) {
-//        free();
-//        this.textures = new SimpleArrayTexture(textures);
-//        this.textures.setFilter(false, false);
-//    }
-//
-//    public void bindTextures() {
-//        textures.bind();
-//    }
-//
-//    @Override
-//    public void free() {
-//        textures.close();
-//    }
 }

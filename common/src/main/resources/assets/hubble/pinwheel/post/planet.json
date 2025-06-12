@@ -1,0 +1,38 @@
+{
+  "stages": [
+    {
+      "type": "veil:mask",
+      "depth": true
+    },
+    {
+      "type": "veil:blit",
+      "shader": "hubble:post/planet",
+      "in": "minecraft:main",
+      "out": "hubble:planet",
+      "clear": false
+    },
+    {
+      "type": "veil:copy",
+      "in": "hubble:planet",
+      "out": "minecraft:main",
+      "clear": true,
+      "color": false,
+      "depth": true
+    },
+    {
+      "type": "veil:copy",
+      "in": "hubble:planet",
+      "out": "veil:post",
+      "clear": true,
+      "depth": true
+    }
+  ],
+  "framebuffers": {
+    "swap": {
+      "depth": true,
+      "format": "RGBA16F",
+      "linear": true,
+      "autoClear": true
+    }
+  }
+}

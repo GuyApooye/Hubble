@@ -1,8 +1,8 @@
 package com.github.guyapooye.hubble.impl.body;
 
-import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.body.CelestialBody;
-import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
+import com.github.guyapooye.hubble.impl.client.render.SunRenderState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;

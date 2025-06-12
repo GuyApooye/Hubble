@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.api.client.renderer;
+package com.github.guyapooye.hubble.api.client.render;
 
 import com.github.guyapooye.hubble.api.body.CelestialBody;
 import foundry.veil.api.client.render.MatrixStack;

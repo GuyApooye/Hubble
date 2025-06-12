@@ -1,6 +1,6 @@
 package com.github.guyapooye.hubble.api.body;
 
-import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceKey;

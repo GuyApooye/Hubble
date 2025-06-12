@@ -1,7 +1,8 @@
-package com.github.guyapooye.hubble.impl.client.renderer;
+package com.github.guyapooye.hubble.impl.client.render;
 
-import com.github.guyapooye.hubble.api.client.renderer.IRenderState;
+import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
+import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
 import com.github.guyapooye.hubble.impl.body.PlanetBody;
 import com.mojang.blaze3d.vertex.*;
@@ -31,7 +32,8 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
     @Override
     public void setup() {
         IRenderState.super.setup();
-        HubbleRenderer.getInstance().getPlanetData().addValuesNoUpdate(position, this.dimensions.div(2.0f, new Vector3f()), this.rotation.get(new Matrix4f()));
+        PlanetData planetData = HubbleRenderer.getInstance().getPlanetData();
+        planetData.addValues(position, this.dimensions.div(2.0f, new Vector3f()), this.rotation.get(new Matrix4f()), texture);
     }
 
     @Override

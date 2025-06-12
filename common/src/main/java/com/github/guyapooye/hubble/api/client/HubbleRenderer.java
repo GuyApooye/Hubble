@@ -1,29 +1,32 @@
 package com.github.guyapooye.hubble.api.client;
 
-import com.github.guyapooye.hubble.HubbleClient;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
 import com.github.guyapooye.hubble.ext.EntityExtension;
-import com.github.guyapooye.hubble.impl.client.renderer.SunRenderState;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
-import foundry.veil.api.client.render.vertex.VertexArray;
+import foundry.veil.api.client.render.texture.SimpleArrayTexture;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.github.guyapooye.hubble.HubbleClient.*;
+import static org.lwjgl.opengl.GL13C.*;
+import static org.lwjgl.opengl.GL30C.GL_TEXTURE_2D_ARRAY;
 
 public final class HubbleRenderer implements NativeResource {
 
-    private final static HubbleRenderer instance = new HubbleRenderer();
+    private static final HubbleRenderer instance = new HubbleRenderer();
+    private static final Minecraft minecraft = Minecraft.getInstance();
     private final Map<ResourceLocation, ImplicitRenderStateHolder> objectsToRender = new HashMap<>();
     private final PlanetData planetData;
     private final SunData sunData;
@@ -43,7 +46,7 @@ public final class HubbleRenderer implements NativeResource {
 
     public void preRender() {
 
-        EntityExtension player = ((EntityExtension) Minecraft.getInstance().player);
+        EntityExtension player = ((EntityExtension) minecraft.player);
 
         while (ROLL.get().consumeClick()) {
             player.hubble$roll(-0.02f);
@@ -53,8 +56,8 @@ public final class HubbleRenderer implements NativeResource {
         }
 
         objectsToRender.clear();
-        planetData.clearNoUpdate();
-        sunData.clearNoUpdate();
+        planetData.clear();
+        sunData.clear();
 
         HubbleClientManager.getInstance().allObjects().forEach((id, object) -> {
             ImplicitRenderStateHolder renderData = objectsToRender.computeIfAbsent(id, (rl) -> new ImplicitRenderStateHolder(object.createRenderState()));
@@ -78,19 +81,35 @@ public final class HubbleRenderer implements NativeResource {
             postManager.runPipeline(postManager.getPipeline(SUN));
         }
 
+        planets:
+        if (!HubbleClientManager.getObjectInspector().disablePlanets()) {
+            PostPipeline planet = postManager.getPipeline(PLANET);
+            SimpleArrayTexture arrayTexture = planetData.createArrayTexture();
+
+            try {
+                arrayTexture.load(minecraft.getResourceManager());
+            } catch (IOException e) {
+                LOGGER.error("Error during planet texture loading!", e);
+                break planets;
+            }
+
+            glActiveTexture(GL_TEXTURE0);
+
+            if (planet != null) {
+                planet.getOrCreateUniform("Textures").setInt(0);
+                postManager.runPipeline(planet);
+            }
+
+            arrayTexture.close();
+        }
+
+
         for (ImplicitRenderStateHolder data : objectsToRender.values()) {
             data.value().render(matrixStack, camera);
         }
 
 
 
-    }
-
-    public void postRender() {
-
-
-//        RenderSystem.depthMask(true);
-//        VeilRenderSystem.renderer().getShaderManager().getShader(Hubble.path("raymarch_sun")).setSampler("Depth",AdvancedFbo.getMainFramebuffer().toRenderTarget().getDepthTextureId());
     }
 
     @Override

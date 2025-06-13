@@ -163,6 +163,9 @@ void main() {
     gl_FragDepth = texture(DiffuseDepthSampler, texCoord).r;
 
     float depth = depthSampleToWorldDepth(gl_FragDepth);
+
+    if ((depth+0.1) >= VeilCamera.FarPlane) depth = MAX_DIST;
+
     vec3 camera = VeilCamera.CameraPosition;
     vec3 rd = viewDirFromUv(texCoord);
 

@@ -41,21 +41,21 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
         {
             newSun = new SunBody(Hubble.path("sun0"), null);
-            newSun.setPosition(new Vector3f(-100000.0f,0.0f,20000.0f));
+            newSun.setPosition(new Vector3f(-30000.0f,0.0f,20000.0f));
             newSun.setDimensions(new Vector3f(10000.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.8f,0.405f,0.195f));
-            newSun.setIntensity(100000.0f);
+            newSun.setIntensity(30000.0f);
             sunObjects.put(newSun, new ImBoolean(false));
         }
 
         {
             newSun = new SunBody(Hubble.path("sun1"), null);
-            newSun.setPosition(new Vector3f(-100000.0f,0.0f,-20000.0f));
+            newSun.setPosition(new Vector3f(-30000.0f,0.0f,-20000.0f));
             newSun.setDimensions(new Vector3f(10000.0f));
             newSun.setRotation(new Quaterniond());
             newSun.setColor(new Vector3f(0.24f,0.325f,1.0f));
-            newSun.setIntensity(100000.0f);
+            newSun.setIntensity(30000.0f);
             sunObjects.put(newSun, new ImBoolean(false));
         }
     }

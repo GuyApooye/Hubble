@@ -20,24 +20,24 @@ public class PlanetData {
     private Vector3f[] dimensions = new Vector3f[SIZE];
     private Matrix4f[] rotation = new Matrix4f[SIZE];
     private ResourceLocation[] textures = new ResourceLocation[SIZE];
-    private int size = 0;
+    private int length = 0;
 
     public PlanetData() {}
 
     public static VeilShaderBufferLayout<PlanetData> createLayout() {
         return (((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)
-                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPosition)).hubble$vec3s("Dims", SIZE, PlanetData::getDimensions)).hubble$mat4s("Rot", SIZE, PlanetData::getRotation).integer("Size", PlanetData::getSize)).build();
+                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPosition)).hubble$vec3s("Dims", SIZE, PlanetData::getDimensions)).hubble$mat4s("Rot", SIZE, PlanetData::getRotation).integer("Length", PlanetData::getLength)).build();
     }
 
     private void setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, ResourceLocation[] textures, int dataSize) {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
         if (block == null) throw new IllegalStateException("Planet data has not been initialized!");
-        if (size >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
+        if (length >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
         this.position = pos.clone();
         this.dimensions = dims.clone();
         this.rotation = rot.clone();
         this.textures = textures.clone();
-        this.size = dataSize;
+        this.length = dataSize;
     }
 
     public void update() {
@@ -55,7 +55,7 @@ public class PlanetData {
         store.position = this.position.clone();
         store.dimensions = this.dimensions.clone();
         store.rotation = this.rotation.clone();
-        store.size = this.size;
+        store.length = this.length;
     }
 
     public void restore(PlanetData load) {
@@ -64,7 +64,7 @@ public class PlanetData {
         this.position = load.position.clone();
         this.dimensions = load.dimensions.clone();
         this.rotation = load.rotation.clone();
-        this.size = load.size;
+        this.length = load.length;
         block.set(this);
         VeilRenderSystem.bind(HubbleShaderBufferRegistry.PLANET_DATA.get());
     }
@@ -91,19 +91,19 @@ public class PlanetData {
     }
 
     public SimpleArrayTexture createArrayTexture() {
-        return new SimpleArrayTexture(Arrays.copyOf(textures, size));
+        return new SimpleArrayTexture(Arrays.copyOf(textures, length));
     }
 
-    public int getSize() {
-        return size;
+    public int getLength() {
+        return length;
     }
 
     public void addValues(Vector3f pos, Vector3f dims, Matrix4f rot, ResourceLocation texture) {
-        if (size >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
-        this.position[size] = pos;
-        this.dimensions[size] = dims;
-        this.rotation[size] = rot;
-        textures[size] = texture;
-        size++;
+        if (length >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
+        this.position[length] = pos;
+        this.dimensions[length] = dims;
+        this.rotation[length] = rot;
+        textures[length] = texture;
+        length++;
     }
 }

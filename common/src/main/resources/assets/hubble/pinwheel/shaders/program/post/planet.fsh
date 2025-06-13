@@ -19,6 +19,19 @@ float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
     return sdBox((vec4(ro - center, 1.0) * mat).xyz, dims);
 }
 
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF) {
+    vec3 m = 1.0/rd;
+    vec3 n = m*ro;
+    vec3 k = abs(m)*boxSize;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+    tN = max( max( t1.x, t1.y ), t1.z );
+    tF = min( min( t2.x, t2.y ), t2.z );
+    if( tN>tF || tF<0.0) return false;
+    if (!(tN>0.0)) tN = 0.0;
+    return true;
+}
+
 bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec3 normal) {
     vec3 m = 1.0/rd;
     vec3 n = m*ro;
@@ -93,7 +106,9 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
     normal = normalize(ro+near*rd-PlanetData.Pos[i]);
 
-    for (int i = 0; i < SunData.Size; ++i) {
+    if (SunData.Length <= 0) return true;
+
+    for (int i = 0; i < SunData.Length; ++i) {
         vec3 diff = ro-SunData.Pos[i];
         float distSquared = diff.x*diff.x+diff.y*diff.y+diff.z*diff.z;
 //        float mul = dot(normal, normalize(ro-SunData.Pos[i]));
@@ -107,16 +122,32 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
 }
 
+//float calculateLight(in vec3 ro, in vec3 rd, in float rl, in int i, in int j) {
+//    vec3 inScatterPoint = ro;
+//    float stepSize = rl / (AtmosphereData.NumInScatteringPoints - 1);
+//    float inScatteredLight = 0.0;
+//
+//    for (int k = 0; k < AtmosphereData.NumInScatteringPoints; k++) {
+//        float near = 0.0;
+//        float far = 0.0;
+//
+//        if (!iBox(inScatterPoint, dirToSun, PlanetData.Pos[i], PlanetData.Dims[i])) continue;
+//
+//        float sunRayLength =
+//        inScatterPoint += rd * stepSize;
+//    }
+//}
+
 bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out vec4 glowColor) {
 
-    if (PlanetData.Size <= 0) return false;
+    if (PlanetData.Length <= 0) return false;
 
     glowColor = vec4(0.0);
     hitColor = vec4(0.0);
 
     int hitIndex = -1;
 
-    for (int i = 0; i < PlanetData.Size; ++i) {
+    for (int i = 0; i < PlanetData.Length; ++i) {
 
         float dist = 0;
 
@@ -134,6 +165,25 @@ bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out
         }
 
     }
+
+//    for (int i = 0; i < PlanetData.Length; ++i) {
+//
+//        float dist = 0;
+//
+//        vec4 color = vec4(0.0);
+//
+//        bool hit = raytrace(ro, rd, i, depth, dist, color);
+//
+//        if (hit) {
+//            if (depth > dist) {
+//                hitColor = color;
+//                hitIndex = i;
+//                depth = dist;
+//            }
+//            continue;
+//        }
+//
+//    }
 
     return hitIndex != -1;
 }

@@ -9,19 +9,15 @@ import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
-import foundry.veil.api.client.render.texture.SimpleArrayTexture;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.system.NativeResource;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.github.guyapooye.hubble.HubbleClient.*;
-import static org.lwjgl.opengl.GL13C.*;
-import static org.lwjgl.opengl.GL30C.GL_TEXTURE_2D_ARRAY;
 
 public final class HubbleRenderer implements NativeResource {
 
@@ -80,14 +76,14 @@ public final class HubbleRenderer implements NativeResource {
 
         suns:
         if (!HubbleClientManager.getObjectInspector().disableSuns()) {
-            if (sunData.getSize() <= 0) break suns;
+            if (sunData.getLength() <= 0) break suns;
             postManager.runPipeline(postManager.getPipeline(SUN));
         }
 
         planets:
         if (!HubbleClientManager.getObjectInspector().disablePlanets()) {
 
-            if (planetData.getSize() <= 0) break planets;
+            if (planetData.getLength() <= 0) break planets;
 
             PostPipeline planet = postManager.getPipeline(PLANET);
 

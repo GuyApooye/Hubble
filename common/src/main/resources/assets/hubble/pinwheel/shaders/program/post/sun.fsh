@@ -55,7 +55,7 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
     distTraveled = 0.0;
 
     vec3 dims = SunData.Dims[i];
-    float size = SunData.Length[i];
+    float size = SunData.Size[i];
 
     float glow = 0;
 
@@ -105,14 +105,14 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
 bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out vec4 glowColor) {
 
-    if (SunData.Size <= 0) return false;
+    if (SunData.Length <= 0) return false;
 
     glowColor = vec4(0.0);
     hitColor = vec4(0.0);
 
     int hitIndex = -1;
 
-    for (int i = 0; i < SunData.Size; ++i) {
+    for (int i = 0; i < SunData.Length; ++i) {
 
         float dist = 0;
 
@@ -134,7 +134,7 @@ bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out
 
     }
 
-    for (int i = 0; i < SunData.Size; ++i) {
+    for (int i = 0; i < SunData.Length; ++i) {
 
         if (i == hitIndex) continue;
 

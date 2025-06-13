@@ -54,9 +54,7 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
 
     distTraveled = 0.0;
 
-    vec3 pos = SunData.Pos[i];
     vec3 dims = SunData.Dims[i];
-    mat4 rot = SunData.Rot[i];
     float size = SunData.Length[i];
 
     float glow = 0;
@@ -67,7 +65,7 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
 
         if (distTraveled >= depth) break;
 
-        stepDistance = sdRotatedBox(ro + rd * distTraveled, pos, dims, rot);
+        stepDistance = sdBox(ro + rd * distTraveled, dims);
 
         glow += getGlow(stepDistance, size);
 
@@ -83,7 +81,7 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in int j, in float depth, out fl
 
     float near = 0.0;
 
-    bool hit = iRotatedBox(ro, rd, SunData.Pos[i], SunData.Dims[i]*(1.0-0.12*j), SunData.Rot[i], near);
+    bool hit = iBox(ro, rd, SunData.Dims[i]*(1.0-0.12*j), near);
 
     if (near >= depth) return false;
 
@@ -120,8 +118,10 @@ bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out
 
         vec4 color = vec4(0.0);
 
-        bool hit = raytrace(ro, rd, i, depth, dist, color);
+        vec3 tRo = (vec4(ro - SunData.Pos[i],1.0) * SunData.Rot[i]).xyz;
+        vec3 tRd = (vec4(rd,0.0) * SunData.Rot[i]).xyz;
 
+        bool hit = raytrace(tRo, tRd, i, depth, dist, color);
 
         if (hit) {
             if (depth > dist) {
@@ -140,7 +140,10 @@ bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out
 
         float distTraveled = 0.0;
 
-        float glow = raymarch(ro, rd, i, depth, distTraveled);
+        vec3 tRo = (vec4(ro - SunData.Pos[i],1.0) * SunData.Rot[i]).xyz;
+        vec3 tRd = (vec4(rd,0.0) * SunData.Rot[i]).xyz;
+
+        float glow = raymarch(tRo, tRd, i, depth, distTraveled);
 
         if (glow >= 3 && distTraveled <= depth) {
             hitIndex = i;

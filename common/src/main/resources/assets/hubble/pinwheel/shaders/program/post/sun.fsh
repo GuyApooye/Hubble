@@ -3,14 +3,14 @@ uniform sampler2D DiffuseDepthSampler;
 uniform sampler2D NoiseSampler;
 
 #define MAX_STEPS 200
-#define MAX_DIST 10000.0
+#define MAX_DIST 1000000.0
 
 in vec2 texCoord;
 
 out vec4 fragColor;
 
-float getGlow(in float dist, float size, float intensity) {
-    return pow(size/(250.0*dist), 0.65);
+float getGlow(in float dist, float size) {
+    return pow(size/(250.0*dist), 0.9);
 }
 
 float sdBox(in vec3 p, in vec3 b) {
@@ -58,7 +58,6 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
     vec3 dims = SunData.Dims[i];
     mat4 rot = SunData.Rot[i];
     float size = SunData.Length[i];
-    float intensity = SunData.Intensity[i];
 
     float glow = 0;
 
@@ -70,7 +69,7 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
 
         stepDistance = sdRotatedBox(ro + rd * distTraveled, pos, dims, rot);
 
-        glow += getGlow(stepDistance, size, intensity);
+        glow += getGlow(stepDistance, size);
 
         if(stepDistance <= 1e-5 || glow >= 3) break;
 

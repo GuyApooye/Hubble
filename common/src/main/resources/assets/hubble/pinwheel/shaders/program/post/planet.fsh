@@ -4,11 +4,22 @@ uniform sampler2D NoiseSampler;
 //layout (binding = 0) uniform sampler2DArray Textures;
 uniform sampler2D PlanetTexture;
 
+#define MAX_DIST 1000000.0
+
 in vec2 texCoord;
 
 out vec4 fragColor;
 
-bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF) {
+float sdBox(in vec3 p, in vec3 b) {
+    vec3 q = abs(p) - b;
+    return length(max(q,0.0)) - min(max(q.x,max(q.z,q.y)),0.0);
+}
+
+float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
+    return sdBox((vec4(ro - center, 1.0) * mat).xyz, dims);
+}
+
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec3 normal) {
     vec3 m = 1.0/rd;
     vec3 n = m*ro;
     vec3 k = abs(m)*boxSize;
@@ -18,12 +29,16 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF) {
     tF = min( min( t2.x, t2.y ), t2.z );
     if( tN>tF || tF<0.0) return false;
     if (!(tN>0.0)) tN = 0.0;
+    normal = (tN>0.0) ? step(vec3(tN),t1) /* ro ouside the box */
+                           :
+                           step(t2,vec3(tF)); /* ro inside the box */
+    normal *= -sign(rd);
     return true;
 }
 
-bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec2 uv) {
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec3 normal, out vec2 uv) {
 
-    bool hit = iBox(ro, rd, boxSize, tN, tF);
+    bool hit = iBox(ro, rd, boxSize, tN, tF, normal);
 
     if (!hit) return false;
     const float e = 0.0001;
@@ -35,17 +50,17 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, o
     else if ((i.x-e) <= -boxSize.x) uv = vec2(i.z/boxSize.z+5.0, -i.y/boxSize.y+3.0)/8.0;
     else if ((i.x+e) >= boxSize.x) uv = vec2(-i.z/boxSize.z+1.0, -i.y/boxSize.y+3.0)/8.0;
     else if ((i.y-e) <= -boxSize.y) uv = vec2(-i.x/boxSize.x+3.0, i.z/boxSize.z+5.0)/8.0;
-    else if ((i.y+e) >= boxSize.y) uv = vec2(-i.x/boxSize.x+3.0, i.z/boxSize.z+1.0)/8.0;
+    else if ((i.y+e) >= boxSize.y) uv = vec2(-i.x/boxSize.x+3.0, -i.z/boxSize.z+1.0)/8.0;
 
     return true;
 }
 
-bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far) {
-    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far);
+bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal) {
+    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal);
 }
 
-bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec2 uv) {
-    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, uv);
+bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal, out vec2 uv) {
+    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal, uv);
 }
 
 float depthSampleToWorldDepth(in float depthSample) {
@@ -63,14 +78,31 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
     float far = 0.0;
     vec2 uv = vec2(0.0);
 
-    bool hit = iRotatedBox(ro, rd, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], near, far, uv);
+    vec3 normal = vec3(0.0);
+
+    bool hit = iRotatedBox(ro, rd, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], near, far, normal, uv);
 
     if (!hit) return false;
     if (near >= depth) return false;
 
 
     dist = near;
-    color = texture(PlanetTexture, uv);
+
+
+    float light = 0.0;
+
+    normal = normalize(ro+near*rd-PlanetData.Pos[i]);
+
+    for (int i = 0; i < SunData.Size; ++i) {
+        vec3 diff = ro-SunData.Pos[i];
+        float distSquared = diff.x*diff.x+diff.y*diff.y+diff.z*diff.z;
+//        float mul = dot(normal, normalize(ro-SunData.Pos[i]));
+        light -= min(SunData.Intensity[i]*dot(normal, normalize(ro-SunData.Pos[i]))/distSquared,0.0);
+    }
+
+    color = texture(PlanetTexture, uv)*light;
+
+
     return true;
 
 }
@@ -112,6 +144,9 @@ void main() {
     gl_FragDepth = texture(DiffuseDepthSampler, texCoord).r;
 
     float depth = depthSampleToWorldDepth(gl_FragDepth);
+
+    if ((depth+0.1) >= VeilCamera.FarPlane) depth = MAX_DIST;
+
     vec3 camera = VeilCamera.CameraPosition;
     vec3 rd = viewDirFromUv(texCoord);
 

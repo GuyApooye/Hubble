@@ -29,7 +29,7 @@ public class SunRenderState implements IRenderState<SunBody> {
     @Override
     public void setup() {
         IRenderState.super.setup();
-        HubbleRenderer.getInstance().getSunData().addValues(position, dimensions.div(2, new Vector3f()), rotation.get(new Matrix4f()), color, intensity);
+        HubbleRenderer.getInstance().getSunData().addValues(position, dimensions.div(2, new Vector3f()), rotation.get(new Matrix4f()), color, intensity*intensity);
     }
 
     @Override

@@ -11,6 +11,7 @@ architectury {
 allprojects {
     group = rootProject.maven_group
     version = rootProject.mod_version
+
 }
 
 subprojects {
@@ -24,6 +25,9 @@ subprojects {
     }
 
     repositories {
+
+        mavenCentral()
+
         maven {
             name = "Valkyrien Skies Internal"
             url = 'https://maven.valkyrienskies.org'
@@ -44,6 +48,8 @@ subprojects {
             exclude group: 'org.lwjgl'
             exclude group: 'org.lwjgl.lwjgl'
         }
+
+        implementation("com.google.code.findbugs:jsr305:3.0.2")
 
         implementation("org.valkyrienskies.core:api:$vs_core_version") { transitive = false }
         implementation("org.valkyrienskies.core:api-game:$vs_core_version") { transitive = false }

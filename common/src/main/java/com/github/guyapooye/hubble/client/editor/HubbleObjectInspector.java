@@ -231,7 +231,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newPlanet.setPosition(new Vector3f(0.0f));
             newPlanet.setDimensions(new Vector3f(1.0f));
             newPlanet.setRotation(new Quaterniond());
-            newPlanet.setTexture(Hubble.path("textures/planet/earth.png"));
+            newPlanet.setTexture(ResourceLocation.withDefaultNamespace("textures/block/bricks.png"));
             planetObjects.put(newPlanet, new ImBoolean(true));
         }
 

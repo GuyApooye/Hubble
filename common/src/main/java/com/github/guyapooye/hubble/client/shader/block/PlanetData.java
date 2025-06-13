@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.Arrays;
+
 @SuppressWarnings("unchecked")
 public class PlanetData {
 
@@ -89,7 +91,7 @@ public class PlanetData {
     }
 
     public SimpleArrayTexture createArrayTexture() {
-        return new SimpleArrayTexture(textures);
+        return new SimpleArrayTexture(Arrays.copyOf(textures, size));
     }
 
     public int getSize() {

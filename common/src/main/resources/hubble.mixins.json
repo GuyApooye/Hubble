@@ -7,6 +7,7 @@
     "swim.client.CameraMixin",
     "swim.client.LivingEntityRendererMixin",
     "swim.client.PlayerRendererMixin",
+    "debug.client.VeilSimpleArrayTextureMixin",
     "world.DimensionSpecialEffectsMixin",
     "world.client.ClientLevelMixin",
     "world.client.LevelRendererMixin"
@@ -15,7 +16,6 @@
     "swim.EntityMixin",
     "swim.LivingEntityMixin",
     "swim.PlayerMixin",
-    "veil.client.VeilShaderBindingProcessorMixin",
     "veil.client.VeilShaderBufferLayoutBuilderMixin",
     "veil.client.VeilShaderBufferRegistryMixin"
   ],

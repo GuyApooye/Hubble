@@ -77,30 +77,40 @@ public final class HubbleRenderer implements NativeResource {
 
         PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
         boolean renderFab = Minecraft.getInstance().levelRenderer.getTranslucentTarget() != null;
+
+        suns:
         if (!HubbleClientManager.getObjectInspector().disableSuns()) {
+            if (sunData.getSize() <= 0) break suns;
             postManager.runPipeline(postManager.getPipeline(SUN));
         }
 
         planets:
         if (!HubbleClientManager.getObjectInspector().disablePlanets()) {
+
+            if (planetData.getSize() <= 0) break planets;
+
             PostPipeline planet = postManager.getPipeline(PLANET);
-            SimpleArrayTexture arrayTexture = planetData.createArrayTexture();
 
-            try {
-                arrayTexture.load(minecraft.getResourceManager());
-            } catch (IOException e) {
-                LOGGER.error("Error during planet texture loading!", e);
-                break planets;
-            }
+//            SimpleArrayTexture arrayTexture = new SimpleArrayTexture(
+//                    ResourceLocation.withDefaultNamespace("textures/block/bricks.png"),
+//                    ResourceLocation.withDefaultNamespace("textures/block/sand.png")
+//            );
 
-            glActiveTexture(GL_TEXTURE0);
+//            glActiveTexture(GL_TEXTURE0);
+//
+//            try {
+//                arrayTexture.load(minecraft.getResourceManager());
+//            } catch (IOException e) {
+//                LOGGER.error("Error during texture loading!", e);
+//                break planets;
+//            }
 
             if (planet != null) {
-                planet.getOrCreateUniform("Textures").setInt(0);
+//                planet.getOrCreateUniform("Textures").setInt(0);
                 postManager.runPipeline(planet);
             }
 
-            arrayTexture.close();
+//            arrayTexture.close();
         }
 
 
@@ -109,6 +119,10 @@ public final class HubbleRenderer implements NativeResource {
         }
 
 
+
+    }
+
+    public void postRender() {
 
     }
 

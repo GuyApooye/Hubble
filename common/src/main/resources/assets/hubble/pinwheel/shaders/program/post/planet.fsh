@@ -1,17 +1,109 @@
-#version 420
-
 uniform sampler2D DiffuseSampler0;
 uniform sampler2D DiffuseDepthSampler;
 uniform sampler2D NoiseSampler;
-layout (binding = 0) uniform sampler2DArray Textures;
+//layout (binding = 0) uniform sampler2DArray Textures;
+uniform sampler2D PlanetTexture;
 
 in vec2 texCoord;
 
 out vec4 fragColor;
 
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF) {
+    vec3 m = 1.0/rd;
+    vec3 n = m*ro;
+    vec3 k = abs(m)*boxSize;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+    tN = max( max( t1.x, t1.y ), t1.z );
+    tF = min( min( t2.x, t2.y ), t2.z );
+    if( tN>tF || tF<0.0) return false;
+    if (!(tN>0.0)) tN = 0.0;
+    return true;
+}
+
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec2 uv) {
+
+    bool hit = iBox(ro, rd, boxSize, tN, tF);
+
+    if (!hit) return false;
+    const float e = 0.0001;
+    vec3 i = ro+tN*rd;
+
+    uv = vec2(0.0);
+    if ((i.z-e) <= -boxSize.z) uv = vec2(-i.x/boxSize.x+3.0, -i.y/boxSize.y+3.0)/8.0;
+    else if ((i.z+e) >= boxSize.z) uv = vec2(i.x/boxSize.x+7.0, -i.y/boxSize.y+3.0)/8.0;
+    else if ((i.x-e) <= -boxSize.x) uv = vec2(i.z/boxSize.z+5.0, -i.y/boxSize.y+3.0)/8.0;
+    else if ((i.x+e) >= boxSize.x) uv = vec2(-i.z/boxSize.z+1.0, -i.y/boxSize.y+3.0)/8.0;
+    else if ((i.y-e) <= -boxSize.y) uv = vec2(-i.x/boxSize.x+3.0, i.z/boxSize.z+5.0)/8.0;
+    else if ((i.y+e) >= boxSize.y) uv = vec2(-i.x/boxSize.x+3.0, i.z/boxSize.z+1.0)/8.0;
+
+    return true;
+}
+
+bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far) {
+    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far);
+}
+
+bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec2 uv) {
+    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, uv);
+}
+
 float depthSampleToWorldDepth(in float depthSample) {
     float f = depthSample * 2.0 - 1.0;
     return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
+}
+
+float worldDepthToDepthSample(in float worldDepth) {
+    return 0.5-0.5*(2*VeilCamera.NearPlane*VeilCamera.FarPlane/worldDepth-VeilCamera.FarPlane-VeilCamera.NearPlane)/(VeilCamera.FarPlane-VeilCamera.NearPlane);
+}
+
+bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, out vec4 color) {
+
+    float near = 0.0;
+    float far = 0.0;
+    vec2 uv = vec2(0.0);
+
+    bool hit = iRotatedBox(ro, rd, PlanetData.Pos[i], PlanetData.Dims[i], PlanetData.Rot[i], near, far, uv);
+
+    if (!hit) return false;
+    if (near >= depth) return false;
+
+
+    dist = near;
+    color = texture(PlanetTexture, uv);
+    return true;
+
+}
+
+bool calculate(in vec3 ro, in vec3 rd, inout float depth, out vec4 hitColor, out vec4 glowColor) {
+
+    if (PlanetData.Size <= 0) return false;
+
+    glowColor = vec4(0.0);
+    hitColor = vec4(0.0);
+
+    int hitIndex = -1;
+
+    for (int i = 0; i < PlanetData.Size; ++i) {
+
+        float dist = 0;
+
+        vec4 color = vec4(0.0);
+
+        bool hit = raytrace(ro, rd, i, depth, dist, color);
+
+        if (hit) {
+            if (depth > dist) {
+                hitColor = color;
+                hitIndex = i;
+                depth = dist;
+            }
+            continue;
+        }
+
+    }
+
+    return hitIndex != -1;
 }
 
 void main() {
@@ -26,8 +118,11 @@ void main() {
     float noise = texture(NoiseSampler, 10.0*texCoord).r;
     noise = (noise - 0.5) * .1;
 
-    if (PlanetData.Size > 0) {
-        fragColor = texture(Textures, vec3(texCoord, 0.0));
+    vec4 hitColor = vec4(0.0);
+    vec4 glowColor = vec4(0.0);
+    if (calculate(camera, rd, depth, hitColor, glowColor)) {
+        fragColor = hitColor;
+        gl_FragDepth = worldDepthToDepthSample(depth);
     }
 
 }

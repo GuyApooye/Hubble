@@ -9,11 +9,11 @@ in vec2 texCoord;
 
 out vec4 fragColor;
 
-float getGlow(in float dist, float size, float intensity){
+float getGlow(in float dist, float size, float intensity) {
     return pow(size/(250.0*dist), 0.65);
 }
 
-float sdBox(in vec3 p, in vec3 b ) {
+float sdBox(in vec3 p, in vec3 b) {
     vec3 q = abs(p) - b;
     return length(max(q,0.0)) - min(max(q.x,max(q.z,q.y)),0.0);
 }
@@ -46,18 +46,9 @@ float depthSampleToWorldDepth(in float depthSample) {
     return 2.0 * VeilCamera.NearPlane * VeilCamera.FarPlane / (VeilCamera.FarPlane + VeilCamera.NearPlane - f * (VeilCamera.FarPlane - VeilCamera.NearPlane));
 }
 
-//float depthSampleToWorldDepth(in float depthSample) {
-//    float f = depthSample * 2.0 - 1.0;
-//    return 2.0 * 0.05 * 10000.0 / (10000.0 + 0.05 - f * (10000.0 - 0.05));
-//}
-
 float worldDepthToDepthSample(in float worldDepth) {
     return 0.5-0.5*(2*VeilCamera.NearPlane*VeilCamera.FarPlane/worldDepth-VeilCamera.FarPlane-VeilCamera.NearPlane)/(VeilCamera.FarPlane-VeilCamera.NearPlane);
 }
-
-//float worldDepthToDepthSample(in float worldDepth) {
-//    return 0.5-0.5*(2*0.05*10000.0/worldDepth-10000.0-0.05)/(10000.0-0.05);
-//}
 
 float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distTraveled) {
 

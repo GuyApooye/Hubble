@@ -39,11 +39,11 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
     @Override
     public void render(MatrixStack matrixStack, Camera camera) {
         IRenderState.super.render(matrixStack, camera);
-        VertexArray vertexArray = VertexArray.create();
-
-        vertexArray.upload(buildPlanet(position, dimensions, rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
-        RenderType planet = HubbleRenderType.planet(texture);
-        vertexArray.drawWithRenderType(planet);
+//        VertexArray vertexArray = VertexArray.create();
+//
+//        vertexArray.upload(buildPlanet(position, dimensions, rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
+//        RenderType planet = HubbleRenderType.planet(texture);
+//        vertexArray.drawWithRenderType(planet);
 //        renderPlanet(this.position, this.dimensions, this.rotation, this.texture, matrixStack, buffer, camera);
     }
 

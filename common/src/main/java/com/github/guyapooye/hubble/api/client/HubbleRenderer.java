@@ -1,5 +1,6 @@
 package com.github.guyapooye.hubble.api.client;
 
+import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
@@ -25,10 +26,12 @@ public final class HubbleRenderer implements NativeResource {
     private static final Minecraft minecraft = Minecraft.getInstance();
     private final Map<ResourceLocation, ImplicitRenderStateHolder> objectsToRender = new HashMap<>();
     private final PlanetData planetData;
+    private final AtmosphereData atmosphereData;
     private final SunData sunData;
 
     private HubbleRenderer() {
         planetData = new PlanetData();
+        atmosphereData = new AtmosphereData();
         sunData = new SunData();
     }
 
@@ -53,6 +56,7 @@ public final class HubbleRenderer implements NativeResource {
 
         objectsToRender.clear();
         planetData.clear();
+        atmosphereData.clear();
         sunData.clear();
 
         HubbleClientManager.getInstance().allObjects().forEach((id, object) -> {
@@ -65,6 +69,7 @@ public final class HubbleRenderer implements NativeResource {
         }
 
         this.planetData.update();
+        this.atmosphereData.update();
         this.sunData.update();
 
     }
@@ -125,12 +130,17 @@ public final class HubbleRenderer implements NativeResource {
     @Override
     public void free() {
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.PLANET_DATA.get());
+        VeilRenderSystem.unbind(HubbleShaderBufferRegistry.ATMOSPHERE_DATA.get());
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
         objectsToRender.clear();
     }
 
     public PlanetData getPlanetData() {
         return planetData;
+    }
+
+    public AtmosphereData getAtmosphereData() {
+        return atmosphereData;
     }
 
     public SunData getSunData() {

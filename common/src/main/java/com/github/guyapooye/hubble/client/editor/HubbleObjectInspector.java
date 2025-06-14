@@ -1,9 +1,12 @@
 package com.github.guyapooye.hubble.client.editor;
 
 import com.github.guyapooye.hubble.Hubble;
+import com.github.guyapooye.hubble.api.body.AtmosphereSettings;
 import com.github.guyapooye.hubble.api.client.HubbleClientManager;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
 import com.github.guyapooye.hubble.api.body.CelestialBody;
+import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
+import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.impl.body.PlanetBody;
 import com.github.guyapooye.hubble.impl.body.SunBody;
 import foundry.veil.api.client.editor.SingleWindowInspector;
@@ -231,8 +234,29 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newPlanet.setPosition(new Vector3f(0.0f));
             newPlanet.setDimensions(new Vector3f(1.0f));
             newPlanet.setRotation(new Quaterniond());
-            newPlanet.setTexture(ResourceLocation.withDefaultNamespace("textures/block/bricks.png"));
+            newPlanet.setAtmosphereSettings(new AtmosphereSettings(2.0f, 1.2f, 2.0f, new Vector3f(700.0f, 530.0f, 440.0f)));
+            newPlanet.setTexture(Hubble.path("textures/planet/earth.png"));
             planetObjects.put(newPlanet, new ImBoolean(true));
+        }
+
+        AtmosphereData atmosphereData = renderer.getAtmosphereData();
+        int[] newInScatteringPoints = new int[]{atmosphereData.getInScatteringPoints()};
+        int[] newOpticalDepthPoints = new int[]{atmosphereData.getOpticalDepthPoints()};
+
+        if (ImGui.treeNode("Global Atmosphere Settings:")) {
+            ImGui.pushItemWidth(100.0f);
+            ImGui.indent();
+            ImGui.text("Number of In Scattering Points: ");
+            if (ImGui.dragInt("##inScatteringPoints", newInScatteringPoints)) {
+                atmosphereData.setGlobalSettings(newInScatteringPoints[0], newOpticalDepthPoints[0]);
+            }
+            ImGui.text("Number of Optical Depth Points: ");
+            if (ImGui.dragInt("##opticalDepthPoints", newOpticalDepthPoints)) {
+                atmosphereData.setGlobalSettings(newInScatteringPoints[0], newOpticalDepthPoints[0]);
+            }
+            ImGui.unindent();
+            ImGui.popItemWidth();
+            ImGui.treePop();
         }
 
         ImGui.text("Disable All:");
@@ -346,6 +370,11 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
             ImGui.popItemWidth();
 
+            if (ImGui.treeNode("atmosphere"+index, "Atmosphere Settings")) {
+                renderAtmosphereComponents(planet);
+                ImGui.treePop();
+            }
+
             if (ImGui.button("Delete")) {
                 wasRemoved = true;
                 planetObjects.remove(planet);
@@ -369,6 +398,50 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
         ImGui.popID();
 
+    }
+
+    private void renderAtmosphereComponents(PlanetBody planet) {
+
+        AtmosphereSettings settings = planet.getAtmosphereSettings();
+        float[] newDensityFalloff = new float[]{settings.getDensityFalloff()};
+        float[] newSize = new float[]{settings.getSize()};
+        float[] newStrength = new float[]{settings.getStrength()};
+        Vector3f scatteringCoefficients = settings.getScatteringCoefficients();
+        float[] newCoefficients = new float[]{scatteringCoefficients.x, scatteringCoefficients.y, scatteringCoefficients.z};
+        boolean valuesChanged = false;
+        ImGui.indent();
+
+        ImGui.pushItemWidth(100.0f);
+
+        ImGui.pushItemWidth(300.0f);
+        ImGui.text("Scattering Coefficients:");
+        if (ImGui.dragFloat3("##scatteringCoefficients", newCoefficients, 0.5f)) {
+            valuesChanged = true;
+        }
+        ImGui.popItemWidth();
+
+        ImGui.text("Strength:");
+        if (ImGui.dragFloat("##strength", newStrength, 0.05f)) {
+            valuesChanged = true;
+        }
+
+        ImGui.text("Density Falloff:");
+        if (ImGui.dragFloat("##densityFalloff", newDensityFalloff, 0.05f)) {
+            valuesChanged = true;
+        }
+
+        ImGui.text("Size:");
+        if (ImGui.dragFloat("##size", newSize, 0.05f)) {
+            valuesChanged = true;
+        }
+
+        if (valuesChanged) {
+            planet.setAtmosphereSettings(new AtmosphereSettings(newDensityFalloff[0], newSize[0], newStrength[0], new Vector3f(newCoefficients)));
+        }
+
+        ImGui.popItemWidth();
+
+        ImGui.unindent();
     }
 
     private void setObjectPosition(CelestialBody<?> object, float[] position) {

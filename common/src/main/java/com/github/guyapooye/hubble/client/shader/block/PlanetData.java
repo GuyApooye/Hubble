@@ -7,13 +7,14 @@ import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
 import foundry.veil.api.client.render.texture.SimpleArrayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-public class PlanetData {
+public final class PlanetData {
 
     public static final int SIZE = 25;
     private Vector3f[] position = new Vector3f[SIZE];
@@ -25,19 +26,26 @@ public class PlanetData {
     public PlanetData() {}
 
     public static VeilShaderBufferLayout<PlanetData> createLayout() {
-        return (((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)
-                VeilShaderBufferLayout.builder()).hubble$vec3s("Pos", SIZE, PlanetData::getPosition)).hubble$vec3s("Dims", SIZE, PlanetData::getDimensions)).hubble$mat4s("Rot", SIZE, PlanetData::getRotation).integer("Length", PlanetData::getLength)).build();
+        return ((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)((VeilShaderBufferLayoutBuilderExtension<PlanetData>)
+                VeilShaderBufferLayout.builder())
+                .hubble$vec3s("Pos", SIZE, PlanetData::getPosition))
+                .hubble$vec3s("Dims", SIZE, PlanetData::getDimensions))
+                .hubble$mat4s("Rot", SIZE, PlanetData::getRotation))
+                .hubble$f32s("Size", SIZE, PlanetData::getSize)
+                .integer("Length", PlanetData::getLength)
+                .build();
     }
 
-    private void setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, ResourceLocation[] textures, int dataSize) {
+    private void setValues(Vector3f[] pos, Vector3f[] dims, Matrix4f[] rot, ResourceLocation[] textures, int length) {
         ShaderBlock<PlanetData> block = VeilRenderSystem.getBlock(HubbleShaderBufferRegistry.PLANET_DATA.get());
         if (block == null) throw new IllegalStateException("Planet data has not been initialized!");
         if (length >= SIZE) throw new RuntimeException("Size of planet data cannot be greater than max size ("+SIZE+")");
+        if (pos.length > SIZE || dims.length > SIZE || rot.length > SIZE || textures.length > SIZE) throw new IllegalArgumentException("Incorrect data array size!");
         this.position = pos.clone();
         this.dimensions = dims.clone();
         this.rotation = rot.clone();
         this.textures = textures.clone();
-        this.length = dataSize;
+        this.length = length;
     }
 
     public void update() {
@@ -79,6 +87,14 @@ public class PlanetData {
 
     public Matrix4f[] getRotation() {
         return rotation;
+    }
+
+    public Float[] getSize() {
+        Float[] size = new Float[SIZE];
+        for (int i = 0; i < this.length; i++) {
+            size[i] = dimensions[i].length()/Mth.sqrt(3.0f);
+        }
+        return size;
     }
 
     public Matrix4f[] getInvRot() {

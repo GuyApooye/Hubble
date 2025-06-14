@@ -1,7 +1,9 @@
 package com.github.guyapooye.hubble.impl.client.render;
 
+import com.github.guyapooye.hubble.api.body.AtmosphereSettings;
 import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
+import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import com.github.guyapooye.hubble.registry.HubbleRenderType;
 import com.github.guyapooye.hubble.impl.body.PlanetBody;
@@ -14,18 +16,22 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.*;
 
+import java.lang.Math;
+
 import static com.github.guyapooye.hubble.client.util.BoxRenderer.renderBoxQuads;
 
 public class PlanetRenderState implements IRenderState<PlanetBody> {
     protected Vector3f position;
     protected Vector3f dimensions;
     protected Quaterniond rotation;
+    protected AtmosphereSettings atmosphereSettings;
     protected ResourceLocation texture;
 
     public PlanetRenderState(PlanetBody planet) {
         position = planet.getPosition();
         dimensions = planet.getDimensions();
         rotation = planet.getRotation();
+        atmosphereSettings = planet.getAtmosphereSettings();
         texture = planet.getTexture();
     }
 
@@ -33,55 +39,19 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
     public void setup() {
         IRenderState.super.setup();
         PlanetData planetData = HubbleRenderer.getInstance().getPlanetData();
+        AtmosphereData atmosphereData = HubbleRenderer.getInstance().getAtmosphereData();
         planetData.addValues(position, this.dimensions.div(2.0f, new Vector3f()), this.rotation.get(new Matrix4f()), texture);
+        float scatteringStrength = atmosphereSettings.getStrength();
+        Vector3f actualCoefficients = atmosphereSettings.getScatteringCoefficients().get(new Vector3f());
+        actualCoefficients.x = (float) (Math.pow(400 / actualCoefficients.x, 4.0) * scatteringStrength);
+        actualCoefficients.y = (float) (Math.pow(400 / actualCoefficients.y, 4.0) * scatteringStrength);
+        actualCoefficients.z = (float) (Math.pow(400 / actualCoefficients.z, 4.0) * scatteringStrength);
+        atmosphereData.addValues(atmosphereSettings.getDensityFalloff(), atmosphereSettings.getSize(), atmosphereSettings.getStrength(), actualCoefficients);
     }
 
     @Override
     public void render(MatrixStack matrixStack, Camera camera) {
         IRenderState.super.render(matrixStack, camera);
-//        VertexArray vertexArray = VertexArray.create();
-//
-//        vertexArray.upload(buildPlanet(position, dimensions, rotation, matrixStack, camera), VertexArray.DrawUsage.DYNAMIC);
-//        RenderType planet = HubbleRenderType.planet(texture);
-//        vertexArray.drawWithRenderType(planet);
-//        renderPlanet(this.position, this.dimensions, this.rotation, this.texture, matrixStack, buffer, camera);
-    }
-
-    public static void renderPlanet(Vector3fc pos, Vector3fc dims, Quaterniondc rot, ResourceLocation texture, MatrixStack matrixStack, MultiBufferSource.BufferSource buffer, Camera camera) {
-
-        matrixStack.matrixPush();
-        RenderType planet = HubbleRenderType.planet(texture);
-        VertexConsumer builder = buffer.getBuffer(planet);
-
-        PoseStack.Pose pose = matrixStack.pose();
-        Vector3f dim = dims.div(2, new Vector3f());
-        Vector3f center = pos.sub(camera.getPosition().toVector3f(), new Vector3f());
-        matrixStack.rotateAround(rot, center.x, center.y, center.z);
-
-        renderBoxQuads(pose, center, dim, builder);
-
-        buffer.endBatch(planet);
-        matrixStack.matrixPop();
-
-
-    }
-
-    public static void renderPlanet(Vector3fc pos, Vector3fc dims, Quaterniondc rot, MatrixStack matrixStack, BufferBuilder builder, Camera camera) {
-
-        matrixStack.matrixPush();
-        PoseStack.Pose pose = matrixStack.pose();
-        Vector3f dim = dims.div(2, new Vector3f());
-        Vector3f center = pos.sub(camera.getPosition().toVector3f(), new Vector3f());
-        matrixStack.rotateAround(rot, center.x, center.y, center.z);
-        renderBoxQuads(pose, center, dim, builder);
-
-        matrixStack.matrixPop();
-    }
-
-    public static MeshData buildPlanet(Vector3fc pos, Vector3fc dims, Quaterniondc rot, MatrixStack matrixStack, Camera camera) {
-        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-        renderPlanet(pos, dims, rot, matrixStack, builder, camera);
-        return builder.buildOrThrow();
     }
 
     public void update(PlanetBody load, float partialTicks) {
@@ -89,6 +59,7 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
         position.lerp(load.getPosition(), partialTicks);
         dimensions.lerp(load.getDimensions(), partialTicks);
         rotation.slerp(load.getRotation(), partialTicks);
+        atmosphereSettings.update(load.getAtmosphereSettings(), partialTicks);
         texture = load.getTexture();
     }
 
@@ -98,6 +69,7 @@ public class PlanetRenderState implements IRenderState<PlanetBody> {
         position = load.getPosition();
         dimensions = load.getDimensions();
         rotation = load.getRotation();
+        atmosphereSettings.load(load.getAtmosphereSettings());
         texture = load.getTexture();
     }
 }

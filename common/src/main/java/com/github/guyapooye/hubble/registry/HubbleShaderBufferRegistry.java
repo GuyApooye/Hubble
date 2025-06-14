@@ -1,5 +1,6 @@
 package com.github.guyapooye.hubble.registry;
 
+import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
 import com.github.guyapooye.hubble.client.shader.block.SunData;
 import com.github.guyapooye.hubble.client.shader.block.PlanetData;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;
@@ -13,6 +14,7 @@ import static foundry.veil.api.client.registry.VeilShaderBufferRegistry.REGISTRY
 public final class HubbleShaderBufferRegistry {
     private static final RegistrationProvider<VeilShaderBufferLayout<?>> PROVIDER;
     public final static Supplier<VeilShaderBufferLayout<PlanetData>> PLANET_DATA;
+    public final static Supplier<VeilShaderBufferLayout<AtmosphereData>> ATMOSPHERE_DATA;
     public final static Supplier<VeilShaderBufferLayout<SunData>> LIGHT_DATA;
 
     private HubbleShaderBufferRegistry() {}
@@ -28,6 +30,7 @@ public final class HubbleShaderBufferRegistry {
     static {
         PROVIDER = RegistrationProvider.get(REGISTRY_KEY, "hubble");
         PLANET_DATA = register("planet_data", PlanetData::createLayout);
+        ATMOSPHERE_DATA = register("atmosphere_data", AtmosphereData::createLayout);
         LIGHT_DATA = register("sun_data", SunData::createLayout);
     }
 }

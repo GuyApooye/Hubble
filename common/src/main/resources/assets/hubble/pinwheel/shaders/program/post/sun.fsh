@@ -10,7 +10,7 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 float getGlow(in float dist, float size) {
-    return pow(size/(250.0*dist), 0.9);
+    return pow(size/(250.0*dist), 0.75);
 }
 
 float sdBox(in vec3 p, in vec3 b) {

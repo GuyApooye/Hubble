@@ -12,7 +12,7 @@ out vec4 fragColor;
 
 float sdBox(in vec3 p, in vec3 b) {
     vec3 q = abs(p) - b;
-    return length(max(q,0.0)) - min(max(q.x,max(q.z,q.y)),0.0);
+    return max(length(max(q,0.0)),0.0);
 }
 
 float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
@@ -147,7 +147,7 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, o
     bool hit = iBox(ro, rd, boxSize, tN, tF, normal);
 
     if (!hit) return false;
-    const float e = 0.0001;
+    const float e = 0.01;
     vec3 i = ro+tN*rd;
 
     uv = vec2(0.0);
@@ -195,20 +195,22 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
     dist = near;
 
 
-    float light = 0.0;
+//    float light = 0.0;
 
-    normal = normalize(ro+near*rd-PlanetData.Pos[i]);
+//    normal = normalize(ro+near*rd-PlanetData.Pos[i]);
+//
+//    if (SunData.Length <= 0) return true;
+//
+//    for (int i = 0; i < SunData.Length; ++i) {
+//        vec3 diff = ro-SunData.Pos[i];
+//        float distSquared = diff.x*diff.x+diff.y*diff.y+diff.z*diff.z;
+////        float mul = dot(normal, normalize(ro-SunData.Pos[i]));
+//        vec3 dirToSun = normalize(PlanetData.Pos[i]-SunData.Pos[i]);
+//        dirToSun = (vec4(dirToSun, 0.0)*PlanetData.Rot[i]).xyz;
+//        light -= min(SunData.Intensity[i]*dot(normal, dirToSun)/distSquared,0.0);
+//    }
 
-    if (SunData.Length <= 0) return true;
-
-    for (int i = 0; i < SunData.Length; ++i) {
-        vec3 diff = ro-SunData.Pos[i];
-        float distSquared = diff.x*diff.x+diff.y*diff.y+diff.z*diff.z;
-//        float mul = dot(normal, normalize(ro-SunData.Pos[i]));
-        light -= min(SunData.Intensity[i]*dot(normal, normalize(ro-SunData.Pos[i]))/distSquared,0.0);
-    }
-
-    color = texture(PlanetTexture, uv)*light;
+    color = texture(PlanetTexture, uv)/***light*/;
 
 
     return true;
@@ -243,7 +245,7 @@ float opticalDepth(in vec3 ro, in vec3 rd, in float rl, in int i) {
     return opticalDepth;
 }
 
-vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength, float noise, int i) {
+vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength, inout vec4 hitColor, float noise, int i) {
 
     vec3 inScatterPoint = rayOrigin;
     float stepSize = rayLength / (AtmosphereData.InScatteringPoints - 1);
@@ -283,6 +285,7 @@ vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength,
 
     vec3 finalCol = reflectedLight + inScatteredLight;*/
 
+//    hitColor *= exp(-viewRayOpticalDepth);
 
     return inScatteredLight;
 }
@@ -335,9 +338,10 @@ bool calculate(in vec3 ro, in vec3 rd, in float noise, inout float depth, out ve
         float distThroughAtmosphere = min(far-near, depth-near);
 
         if (distThroughAtmosphere > 0) {
-            vec3 pointInAtmosphere = tRo + tRd * near;
+            const float e = 0.001;
+            vec3 pointInAtmosphere = tRo + tRd * (near + e);
             for (int j = 0; j < SunData.Length; ++j) {
-                glowColor += calculateLight(pointInAtmosphere, tRd, (vec4(normalize(SunData.Pos[j] - PlanetData.Pos[i]),0.0)*PlanetData.Rot[i]).xyz, distThroughAtmosphere, noise, i);
+                glowColor += calculateLight(pointInAtmosphere, tRd, (vec4(normalize(SunData.Pos[j] - PlanetData.Pos[i]),0.0)*PlanetData.Rot[i]).xyz, (distThroughAtmosphere - e), hitColor, noise, i);
             }
         }
 

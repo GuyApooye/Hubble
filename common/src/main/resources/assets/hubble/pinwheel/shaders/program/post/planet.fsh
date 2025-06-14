@@ -15,9 +15,9 @@ float sdBox(in vec3 p, in vec3 b) {
     return max(length(max(q,0.0)),0.0);
 }
 
-float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
-    return sdBox((vec4(ro - center, 1.0) * mat).xyz, dims);
-}
+//float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
+//    return sdBox((vec4(ro - center, 1.0) * mat).xyz, dims);
+//}
 
 bool iSphere( in vec3 ro, in vec3 rd, in float ra, out float tN, out float tF)
 {
@@ -142,9 +142,9 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, o
     return true;
 }
 
-bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec3 normal, out vec2 uv) {
+bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, out vec2 uv) {
 
-    bool hit = iBox(ro, rd, boxSize, tN, tF, normal);
+    bool hit = iBox(ro, rd, boxSize, tN, tF);
 
     if (!hit) return false;
     const float e = 0.01;
@@ -161,13 +161,13 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, o
     return true;
 }
 
-bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal) {
-    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal);
-}
-
-bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal, out vec2 uv) {
-    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal, uv);
-}
+//bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal) {
+//    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal);
+//}
+//
+//bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near, out float far, out vec3 normal, out vec2 uv) {
+//    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near, far, normal, uv);
+//}
 
 float depthSampleToWorldDepth(in float depthSample) {
     float f = depthSample * 2.0 - 1.0;
@@ -186,7 +186,7 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
     vec3 normal = vec3(0.0);
 
-    bool hit = iBox(ro, rd, PlanetData.Dims[i], near, far, normal, uv);
+    bool hit = iBox(ro, rd, PlanetData.Dims[i], near, far, uv);
 
     if (!hit) return false;
     if (near >= depth) return false;
@@ -196,8 +196,8 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
 
 //    float light = 0.0;
-
-//    normal = normalize(ro+near*rd-PlanetData.Pos[i]);
+//
+//    normal = normalize(ro+near*rd);
 //
 //    if (SunData.Length <= 0) return true;
 //
@@ -210,7 +210,7 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 //        light -= min(SunData.Intensity[i]*dot(normal, dirToSun)/distSquared,0.0);
 //    }
 
-    color = texture(PlanetTexture, uv)/***light*/;
+    color = texture(PlanetTexture, uv)*1.0;
 
 
     return true;
@@ -285,7 +285,7 @@ vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength,
 
     vec3 finalCol = reflectedLight + inScatteredLight;*/
 
-//    hitColor *= exp(-viewRayOpticalDepth);
+    hitColor *= inScatteredLight.a;
 
     return inScatteredLight;
 }
@@ -368,12 +368,12 @@ void main() {
     vec4 hitColor = vec4(0.0);
     vec4 glowColor = vec4(0.0);
     if (calculate(camera, rd, noise, depth, hitColor, glowColor)) {
-        fragColor = hitColor;
+        fragColor = hitColor + glowColor;
         gl_FragDepth = worldDepthToDepthSample(depth);
+    } else {
+        glowColor.a = clamp(glowColor.a,0.0,1.0);
+
+        fragColor = fragColor * (1-glowColor.a) + glowColor;
     }
-
-    glowColor.a = clamp(glowColor.a,0.0,1.0);
-
-    fragColor = fragColor * (1-glowColor.a) + glowColor;
 
 }

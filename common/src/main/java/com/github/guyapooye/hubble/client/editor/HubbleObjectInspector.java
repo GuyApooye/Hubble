@@ -44,23 +44,35 @@ public class HubbleObjectInspector extends SingleWindowInspector {
 
         {
             newSun = new SunBody(Hubble.path("sun0"), null);
-            newSun.setPosition(new Vector3f(-30000.0f,0.0f,20000.0f));
-            newSun.setDimensions(new Vector3f(10000.0f));
-            newSun.setRotation(new Quaterniond());
+            newSun.setPosition(new Vector3f(-146.0f,1000.0f,-7854.0f));
+            newSun.setDimensions(new Vector3f(1000.0f));
+            newSun.setRotation(new Quaterniond().rotationXYZ(-0.8f, -1.0f, 0.0f));
             newSun.setColor(new Vector3f(0.8f,0.405f,0.195f));
-            newSun.setIntensity(30000.0f);
+            newSun.setIntensity(3000.0f);
             sunObjects.put(newSun, new ImBoolean(false));
         }
 
         {
             newSun = new SunBody(Hubble.path("sun1"), null);
-            newSun.setPosition(new Vector3f(-30000.0f,0.0f,-20000.0f));
-            newSun.setDimensions(new Vector3f(10000.0f));
-            newSun.setRotation(new Quaterniond());
-            newSun.setColor(new Vector3f(0.24f,0.325f,1.0f));
-            newSun.setIntensity(30000.0f);
+            newSun.setPosition(new Vector3f(-146.0f,1000.0f,-7854.0f));
+            newSun.setDimensions(new Vector3f(1000.0f));
+            newSun.setRotation(new Quaterniond().rotationXYZ(-0.8f, -1.0f, 0.0f));
+            newSun.setColor(new Vector3f(0.24f,0.325f,0.8f));
+            newSun.setIntensity(3000.0f);
             sunObjects.put(newSun, new ImBoolean(false));
         }
+
+        PlanetBody newPlanet;
+        {
+            newPlanet = new PlanetBody(Hubble.path("planet0"), null);
+            newPlanet.setPosition(new Vector3f(0.0f, 1000.0f, 0.0f));
+            newPlanet.setDimensions(new Vector3f(1000.0f));
+            newPlanet.setRotation(new Quaterniond().rotationXYZ(0.0f, 0.0f, 2.201f));
+            newPlanet.setAtmosphereSettings(new AtmosphereSettings(9.0f, 0.15f, 1.3f, new Vector3f(700.0f, 530.0f, 440.0f)));
+            newPlanet.setTexture(Hubble.path("textures/planet/earth.png"));
+            planetObjects.put(newPlanet, new ImBoolean(true));
+        }
+
     }
 
     @Override
@@ -234,7 +246,7 @@ public class HubbleObjectInspector extends SingleWindowInspector {
             newPlanet.setPosition(new Vector3f(0.0f));
             newPlanet.setDimensions(new Vector3f(1.0f));
             newPlanet.setRotation(new Quaterniond());
-            newPlanet.setAtmosphereSettings(new AtmosphereSettings(2.0f, 1.2f, 2.0f, new Vector3f(700.0f, 530.0f, 440.0f)));
+            newPlanet.setAtmosphereSettings(new AtmosphereSettings(9.0f, 0.15f, 1.3f, new Vector3f(700.0f, 530.0f, 440.0f)));
             newPlanet.setTexture(Hubble.path("textures/planet/earth.png"));
             planetObjects.put(newPlanet, new ImBoolean(true));
         }

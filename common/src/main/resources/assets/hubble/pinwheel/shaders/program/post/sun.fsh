@@ -10,16 +10,12 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 float getGlow(in float dist, float size) {
-    return pow(size/(250.0*dist), 0.75);
+    return pow(size/(50.0*dist), 1.2);
 }
 
 float sdBox(in vec3 p, in vec3 b) {
     vec3 q = abs(p) - b;
     return length(max(q,0.0)) - min(max(q.x,max(q.z,q.y)),0.0);
-}
-
-float sdRotatedBox(in vec3 ro, in vec3 center, in vec3 dims, in mat4 mat) {
-    return sdBox((vec4(ro - center, 1.0) * mat).xyz, dims);
 }
 
 bool iBox( in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN) {
@@ -31,14 +27,8 @@ bool iBox( in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN) {
     tN = max( max( t1.x, t1.y ), t1.z );
     float tF = min( min( t2.x, t2.y ), t2.z );
     if( tN>tF || tF<0.0) return false;
-
     if (!(tN>0.0)) tN = 0.0;
-
     return true;
-}
-
-bool iRotatedBox(in vec3 ro, in vec3 rd, in vec3 center, in vec3 dims, in mat4 mat, out float near) {
-    return iBox((vec4(ro - center, 1.0) * mat).xyz, (vec4(rd, 0.0) * mat).xyz, dims, near);
 }
 
 float depthSampleToWorldDepth(in float depthSample) {

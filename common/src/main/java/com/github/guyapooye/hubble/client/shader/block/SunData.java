@@ -5,6 +5,7 @@ import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.api.client.render.shader.block.ShaderBlock;
+import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -57,7 +58,7 @@ public final class SunData {
     public Float[] getSize() {
         Float[] size = new Float[SIZE];
         for (int i = 0; i < this.length; i++) {
-            size[i] = dimensions[i].length();
+            size[i] = dimensions[i].length()/Mth.sqrt(3.0f);
         }
         return size;
     }

@@ -10,6 +10,8 @@ in vec2 texCoord;
 
 out vec4 fragColor;
 
+const float e = 0.001;
+
 float sdBox(in vec3 p, in vec3 b) {
     vec3 q = abs(p) - b;
     return max(length(max(q,0.0)),0.0);
@@ -147,7 +149,6 @@ bool iBox(in vec3 ro, in vec3 rd, in vec3 boxSize, out float tN, out float tF, o
     bool hit = iBox(ro, rd, boxSize, tN, tF);
 
     if (!hit) return false;
-    const float e = 0.01;
     vec3 i = ro+tN*rd;
 
     uv = vec2(0.0);
@@ -225,7 +226,7 @@ bool raytrace(in vec3 ro, in vec3 rd, in int i, in float depth, out float dist, 
 
 float densityAtPoint(in vec3 densitySamplePoint, in int i) {
     float heightAboveSurface = sdBox(densitySamplePoint, PlanetData.Dims[i]);
-    float height01 = heightAboveSurface / (AtmosphereData.Scale[i]*PlanetData.Dims[i].x);
+    float height01 = clamp(heightAboveSurface / (AtmosphereData.Scale[i]*PlanetData.Size[i]),0.0,1.0);
     float localDensity = exp(-height01 * AtmosphereData.DensityFalloff[i]) * (1.0 - height01);
     return localDensity;
 }
@@ -245,7 +246,7 @@ float opticalDepth(in vec3 ro, in vec3 rd, in float rl, in int i) {
     return opticalDepth;
 }
 
-vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength, inout vec4 hitColor, float noise, int i) {
+vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength, inout float light, float noise, int i) {
 
     vec3 inScatterPoint = rayOrigin;
     float stepSize = rayLength / (AtmosphereData.InScatteringPoints - 1);
@@ -258,9 +259,9 @@ vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength,
         float far = 0.0;
 
 //        if (!iBox(inScatterPoint, dirToSun, PlanetData.Dims[i]*(1.0+AtmosphereData.Scale[i]), near, far)) continue;
-        iBox(inScatterPoint, dirToSun, PlanetData.Dims[i]*(1.0+AtmosphereData.Scale[i]), near, far);
+        iBox(inScatterPoint, dirToSun, PlanetData.Dims[i]*(1.0+AtmosphereData.Scale[i]+e), near, far);
 
-        float sunRayLength = far-near;
+        float sunRayLength = far-near-e;
         float sunRayOpticalDepth = opticalDepth(inScatterPoint, dirToSun, sunRayLength, i);
         float localDensity = densityAtPoint(inScatterPoint, i);
         viewRayOpticalDepth = opticalDepth(rayOrigin, rayDir, stepSize * j, i);
@@ -285,7 +286,7 @@ vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength,
 
     vec3 finalCol = reflectedLight + inScatteredLight;*/
 
-    hitColor *= inScatteredLight.a;
+    light += inScatteredLight.a;
 
     return inScatteredLight;
 }
@@ -338,11 +339,12 @@ bool calculate(in vec3 ro, in vec3 rd, in float noise, inout float depth, out ve
         float distThroughAtmosphere = min(far-near, depth-near);
 
         if (distThroughAtmosphere > 0) {
-            const float e = 0.001;
             vec3 pointInAtmosphere = tRo + tRd * (near + e);
+            float light = 0;
             for (int j = 0; j < SunData.Length; ++j) {
-                glowColor += calculateLight(pointInAtmosphere, tRd, (vec4(normalize(SunData.Pos[j] - PlanetData.Pos[i]),0.0)*PlanetData.Rot[i]).xyz, (distThroughAtmosphere - e), hitColor, noise, i);
+                glowColor += calculateLight(pointInAtmosphere, tRd, (vec4(normalize(SunData.Pos[j] - PlanetData.Pos[i]),0.0)*PlanetData.Rot[i]).xyz, (distThroughAtmosphere - e), light, noise, i);
             }
+            hitColor *= light;
         }
 
     }

@@ -286,7 +286,7 @@ vec4 calculateLight(vec3 rayOrigin, vec3 rayDir, vec3 dirToSun, float rayLength,
 
     vec3 finalCol = reflectedLight + inScatteredLight;*/
 
-    light += inScatteredLight.a;
+    light += max(inScatteredLight.a,0);
 
     return inScatteredLight;
 }
@@ -322,6 +322,8 @@ bool calculate(in vec3 ro, in vec3 rd, in float noise, inout float depth, out ve
 
     }
 
+    float light = 0;
+
     for (int i = 0; i < PlanetData.Length; ++i) {
 
         float near = 0.0;
@@ -340,14 +342,15 @@ bool calculate(in vec3 ro, in vec3 rd, in float noise, inout float depth, out ve
 
         if (distThroughAtmosphere > 0) {
             vec3 pointInAtmosphere = tRo + tRd * (near + e);
-            float light = 0;
             for (int j = 0; j < SunData.Length; ++j) {
                 glowColor += calculateLight(pointInAtmosphere, tRd, (vec4(normalize(SunData.Pos[j] - PlanetData.Pos[i]),0.0)*PlanetData.Rot[i]).xyz, (distThroughAtmosphere - e), light, noise, i);
             }
-            hitColor *= light;
+
         }
 
     }
+
+    hitColor *= light;
 
     return hitIndex != -1;
 }

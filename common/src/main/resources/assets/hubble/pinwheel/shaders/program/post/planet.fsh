@@ -333,7 +333,6 @@ bool calculate(in vec3 ro, in vec3 rd, in float noise, inout float depth, out ve
         vec3 tRd = (vec4(rd,0.0) * PlanetData.Rot[i]).xyz;
 
         bool hit = iBox(tRo, tRd, PlanetData.Dims[i]*(1.0+AtmosphereData.Scale[i]), near, far);
-//        bool hit = iSphere(tRo, tRd, 12.0, near, far);
 
         if (!hit) continue;
         if (near >= depth) continue;

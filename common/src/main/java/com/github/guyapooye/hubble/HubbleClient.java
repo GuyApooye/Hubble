@@ -6,6 +6,7 @@ import com.github.guyapooye.hubble.client.shader.preprocessor.HubbleDependencies
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
+import foundry.veil.api.client.registry.RenderTypeShardRegistry;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;

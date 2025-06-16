@@ -1,0 +1,5 @@
+{
+  "vertex": "hubble:rendertype/reentry/effect2",
+  "geometry": "hubble:rendertype/reentry/effect2",
+  "fragment": "hubble:rendertype/reentry/effect"
+}

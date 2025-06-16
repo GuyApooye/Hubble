@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.github.guyapooye.hubble.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "debug.DebugDynamicRenderTypeManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

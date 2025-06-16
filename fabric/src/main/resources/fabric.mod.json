@@ -22,7 +22,8 @@
     ]
   },
   "mixins": [
-    "hubble.mixins.json"
+    "hubble.mixins.json",
+    "hubble-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.14",

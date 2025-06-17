@@ -1,8 +1,10 @@
 package com.github.guyapooye.hubble.api.client;
 
-import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
-import com.github.guyapooye.hubble.client.shader.block.SunData;
-import com.github.guyapooye.hubble.client.shader.block.PlanetData;
+import com.github.guyapooye.hubble.HubbleUtil;
+import com.github.guyapooye.hubble.client.render.HubbleReentryManager;
+import com.github.guyapooye.hubble.client.render.shader.block.AtmosphereData;
+import com.github.guyapooye.hubble.client.render.shader.block.SunData;
+import com.github.guyapooye.hubble.client.render.shader.block.PlanetData;
 import com.github.guyapooye.hubble.api.client.util.ImplicitRenderStateHolder;
 import com.github.guyapooye.hubble.ext.EntityExtension;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;
@@ -10,6 +12,8 @@ import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
+import foundry.veil.api.event.VeilRenderLevelStageEvent;
+import foundry.veil.platform.VeilEventPlatform;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +28,7 @@ public final class HubbleRenderer implements NativeResource {
 
     private static final HubbleRenderer instance = new HubbleRenderer();
     private static final Minecraft minecraft = Minecraft.getInstance();
+    private final HubbleReentryManager reentryManager = new HubbleReentryManager();
     private final Map<ResourceLocation, ImplicitRenderStateHolder> objectsToRender = new HashMap<>();
     private final PlanetData planetData;
     private final AtmosphereData atmosphereData;
@@ -37,6 +42,18 @@ public final class HubbleRenderer implements NativeResource {
 
     @ApiStatus.Internal
     public static void bootstrap() {
+        VeilEventPlatform.INSTANCE.onVeilRenderLevelStage((stage, levelRenderer, bufferSource, matrixStack, matrix4fc, matrix4fc1, i, deltaTracker, camera, frustum) -> {
+            if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+                if (HubbleUtil.shouldExecuteSpace(minecraft.level.dimension())) {
+                    HubbleRenderer renderer = HubbleRenderer.getInstance();
+
+                    renderer.preRender();
+                    renderer.render(matrixStack, camera);
+                    renderer.postRender();
+
+                }
+            }
+        });
     }
 
     public static HubbleRenderer getInstance() {
@@ -145,5 +162,9 @@ public final class HubbleRenderer implements NativeResource {
 
     public SunData getSunData() {
         return sunData;
+    }
+
+    public HubbleReentryManager getReentryManager() {
+        return reentryManager;
     }
 }

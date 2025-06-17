@@ -3,16 +3,11 @@ package com.github.guyapooye.hubble.impl.client.render;
 import com.github.guyapooye.hubble.api.body.AtmosphereSettings;
 import com.github.guyapooye.hubble.api.client.render.IRenderState;
 import com.github.guyapooye.hubble.api.client.HubbleRenderer;
-import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
-import com.github.guyapooye.hubble.client.shader.block.PlanetData;
-import com.github.guyapooye.hubble.registry.HubbleRenderType;
+import com.github.guyapooye.hubble.client.render.shader.block.AtmosphereData;
+import com.github.guyapooye.hubble.client.render.shader.block.PlanetData;
 import com.github.guyapooye.hubble.impl.body.PlanetBody;
-import com.mojang.blaze3d.vertex.*;
 import foundry.veil.api.client.render.MatrixStack;
-import foundry.veil.api.client.render.vertex.VertexArray;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.*;
 

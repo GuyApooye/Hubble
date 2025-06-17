@@ -1,8 +1,8 @@
 
-in vec4 color;
+in vec4 fVertexColor;
 
 out vec4 fragColor;
 
 void main() {
-    fragColor = color;
+    fragColor = fVertexColor;
 }

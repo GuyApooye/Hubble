@@ -6,7 +6,6 @@
   "client": [
   ],
   "mixins": [
-    "debug.DebugDynamicRenderTypeManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

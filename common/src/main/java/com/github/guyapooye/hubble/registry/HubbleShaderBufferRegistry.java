@@ -1,8 +1,8 @@
 package com.github.guyapooye.hubble.registry;
 
-import com.github.guyapooye.hubble.client.shader.block.AtmosphereData;
-import com.github.guyapooye.hubble.client.shader.block.SunData;
-import com.github.guyapooye.hubble.client.shader.block.PlanetData;
+import com.github.guyapooye.hubble.client.render.shader.block.AtmosphereData;
+import com.github.guyapooye.hubble.client.render.shader.block.SunData;
+import com.github.guyapooye.hubble.client.render.shader.block.PlanetData;
 import foundry.veil.api.client.render.VeilShaderBufferLayout;
 import foundry.veil.platform.registry.RegistrationProvider;
 import org.jetbrains.annotations.ApiStatus;

@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.client.shader.block;
+package com.github.guyapooye.hubble.client.render.shader.block;
 
 import com.github.guyapooye.hubble.ext.VeilShaderBufferLayoutBuilderExtension;
 import com.github.guyapooye.hubble.registry.HubbleShaderBufferRegistry;

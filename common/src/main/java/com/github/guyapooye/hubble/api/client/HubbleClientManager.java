@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class HubbleClientManager {
     private static final HubbleClientManager INSTANCE = new HubbleClientManager();
-    private static final HubbleObjectInspector objectInspector = new HubbleObjectInspector(Veil.platform().isDevelopmentEnvironment());
+    private static final HubbleObjectInspector objectInspector = new HubbleObjectInspector(true/*Veil.platform().isDevelopmentEnvironment()*/);
     private static final HubbleReentryInspector reentryInspector = new HubbleReentryInspector();
 
     private final ConcurrentHashMap<ResourceLocation, CelestialBody<?>> allObjects = new ConcurrentHashMap<>();

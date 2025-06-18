@@ -1,8 +1,6 @@
 {
   "vertex": "hubble:rendertype/reentry/effect",
   "geometry": "hubble:rendertype/reentry/effect",
-  "tesselation_control": "hubble:rendertype/reentry/effect",
-  "tesselation_evaluation": "hubble:rendertype/reentry/effect",
   "fragment": "hubble:rendertype/reentry/effect",
   "textures": {
     "NoiseSampler": "hubble:textures/noise/animated_noise.png"

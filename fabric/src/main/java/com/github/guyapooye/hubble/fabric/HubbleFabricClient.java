@@ -18,13 +18,13 @@ public final class HubbleFabricClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(ROLL_INVERSE.get());
 
         VeilEventPlatform.INSTANCE.onVeilRegisterBlockLayers(registry -> {
-            registry.registerBlockLayer(HubbleRenderType.reentry());
+            registry.registerBlockLayer(HubbleRenderType.reentryFinal());
         });
 
         VeilEventPlatform.INSTANCE.onVeilRegisterFixedBuffers(registry -> {
-            registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS, HubbleRenderType.reentry());
+            registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, HubbleRenderType.reentryFinal());
         });
 
-        BlockRenderLayerMap.INSTANCE.putBlock(Hubble.DEBUG_REENTRY_BLOCK, HubbleRenderType.reentry());
+        BlockRenderLayerMap.INSTANCE.putBlock(Hubble.DEBUG_REENTRY_BLOCK, HubbleRenderType.reentryFinal());
     }
 }

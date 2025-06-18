@@ -14,17 +14,18 @@ uniform float Velocity;
 uniform float Strength;
 uniform float Increment;
 uniform float TaperSize;
-uniform vec4 Color0;
-uniform vec4 Color1;
-uniform vec4 Color2;
+uniform vec4 LightColor;
+uniform vec4 TrailColor;
+uniform vec4 TrailColorHot;
+uniform vec4 BowShockColor;
+uniform float BowShockOffset;
+uniform float BowShockColorLerpOffset;
 
 const vec3 gLightDirection = vec3(-.577, -.577, .577);
 const float gShadowMapBias = 0.0008f;
 const ivec2 gShadowMapSize = ivec2(1920, 1080);
 const float gShadowStrength = 1.0;
 const float gSunStrength = 0.8f;
-
-const float gReentryStrength = 1.0;
 
 const int gSubImageX = 0;
 const int gSubImageY = 0;
@@ -35,19 +36,12 @@ const int gSubImageChannelN = 0;
 const float gNoiseLerp = 0;
 
 const float gVelMultiplier = 0.00006;
-const float gIncrement = 0.25;
-const float gTaperSize = 0.5;
-
-
-const float gBounceOffset = 1.0;
-const vec4 gBounceColor = vec4(0.5, 0.5, 0.99, 0.1);
-const float gBounceColLerpOffset = 0.5;
 
 in float vertexDistance[3];
 in vec4 vertexColor[3];
 in vec2 texCoord0[3];
 in GS_INPUT {
-    vec3 worldPosition;
+//    vec3 worldPosition;
     vec3 normal;
     vec2 noiseTexCoord0;
     vec2 noiseTexCoord1;
@@ -104,11 +98,11 @@ void main() {
 
     lengthVar *= occlusion;
 
-    float strength = Velocity/4000;
-    vec3 brightCol = lerp(Color2.rgb, gBounceColor.rgb, saturate(strength-gBounceColLerpOffset));
-    vec4 col1 = vec4(brightCol, Color2.a)*strength*Strength;
-    vec4 col2 = lerp(Color2, Color1, Increment)*strength*Strength;
-    vec4 col3 = Color1*strength*Strength;
+    float strength = Velocity/4000.0;
+    vec3 brightCol = lerp(TrailColorHot.rgb, BowShockColor.rgb, saturate(strength-BowShockColorLerpOffset));
+    vec4 col1 = vec4(brightCol, TrailColorHot.a)*strength*Strength;
+    vec4 col2 = lerp(TrailColorHot, TrailColor, Increment)*strength*Strength;
+    vec4 col3 = TrailColor*strength*Strength;
 
     float curve = Increment*1.5;
     vec3 nMove = normalize(Direction);
@@ -122,8 +116,8 @@ void main() {
 
             int j = (i + 1) % 3;
 
-            vec3 nCenter = normalize(gs_in[i].worldPosition);
-            vec3 nSize = normalize(cross(nMove, nCenter));
+//            vec3 nCenter = normalize(gs_in[i].worldPosition);
+            vec3 nSize = normalize(cross(nMove, normal));
 
             velDot = pow(1.0 - velDot, 3.0);//assuming velDot larger 0
 

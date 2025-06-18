@@ -1,5 +1,8 @@
 {
   "vertex": "hubble:rendertype/reentry/effect2",
   "geometry": "hubble:rendertype/reentry/effect2",
-  "fragment": "hubble:rendertype/reentry/effect"
+  "fragment": "hubble:rendertype/reentry/effect",
+  "textures": {
+    "NoiseSampler": "hubble:textures/noise/animated_noise.png"
+  }
 }

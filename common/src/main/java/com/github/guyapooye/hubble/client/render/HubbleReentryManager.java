@@ -9,6 +9,7 @@ import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;
 
 import static com.github.guyapooye.hubble.HubbleClient.REENTRY_PASS_2;
+import static com.github.guyapooye.hubble.HubbleClient.REENTRY_PASS_3;
 
 public class HubbleReentryManager {
 
@@ -18,19 +19,32 @@ public class HubbleReentryManager {
         });
     }
 
+    private void attachUniforms(ShaderProgram pass, HubbleReentryInspector reentryInspector) {
+        pass.getOrCreateUniform("Direction").setVector(reentryInspector.getDirection());
+        pass.getOrCreateUniform("Length").setFloat(reentryInspector.getLength());
+        pass.getOrCreateUniform("Velocity").setFloat(reentryInspector.getVelocity());
+        pass.getOrCreateUniform("Strength").setFloat(reentryInspector.getStrength());
+        pass.getOrCreateUniform("Increment").setFloat(reentryInspector.getIncrement());
+        pass.getOrCreateUniform("TaperSize").setFloat(reentryInspector.getTaperSize());
+        pass.getOrCreateUniform("LightColor").setVector(reentryInspector.getLightColor());
+        pass.getOrCreateUniform("TrailColor").setVector(reentryInspector.getTrailColor());
+        pass.getOrCreateUniform("TrailColorHot").setVector(reentryInspector.getTrailColorHot());
+        pass.getOrCreateUniform("BowShockColor").setVector(reentryInspector.getBowShockColor());
+        pass.getOrCreateUniform("BowShockOffset").setFloat(reentryInspector.getBowShockOffset());
+        pass.getOrCreateUniform("BowShockColorLerpOffset").setFloat(reentryInspector.getBowShockColorLerpOffset());
+    }
+
     public void tick() {
         HubbleReentryInspector reentryInspector = HubbleClientManager.getReentryInspector();
         if (reentryInspector == null) return;
 
         ShaderProgram secondPass = VeilRenderSystem.renderer().getShaderManager().getShader(REENTRY_PASS_2);
-        secondPass.getOrCreateUniform("Direction").setVector(reentryInspector.getDirection());
-        secondPass.getOrCreateUniform("Length").setFloat(reentryInspector.getLength());
-        secondPass.getOrCreateUniform("Velocity").setFloat(reentryInspector.getVelocity());
-        secondPass.getOrCreateUniform("Strength").setFloat(reentryInspector.getStrength());
-        secondPass.getOrCreateUniform("Increment").setFloat(reentryInspector.getIncrement());
-        secondPass.getOrCreateUniform("TaperSize").setFloat(reentryInspector.getTaperSize());
-        secondPass.getOrCreateUniform("Color0").setVector(reentryInspector.getColor0());
-        secondPass.getOrCreateUniform("Color1").setVector(reentryInspector.getColor1());
-        secondPass.getOrCreateUniform("Color2").setVector(reentryInspector.getColor2());
+        ShaderProgram thirdPass = VeilRenderSystem.renderer().getShaderManager().getShader(REENTRY_PASS_3);
+        if (secondPass != null) {
+            attachUniforms(secondPass, reentryInspector);
+        }
+        if (thirdPass != null) {
+            attachUniforms(thirdPass, reentryInspector);
+        }
     }
 }

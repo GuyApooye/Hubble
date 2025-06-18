@@ -27,7 +27,7 @@ out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
 out GS_INPUT {
-    vec3 worldPosition;
+//    vec3 worldPosition;
     vec3 normal;
     vec2 noiseTexCoord0;
     vec2 noiseTexCoord1;
@@ -40,7 +40,7 @@ void main() {
     vertexDistance = fog_distance(pos, FogShape);
     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
     texCoord0 = UV0;
-    gs_in.worldPosition = Normal;
+//    gs_in.worldPosition = Normal;
     gs_in.normal = Normal;
     gs_in.noiseTexCoord0 = vec2(gSubImageX*0.25f+UV0.x*0.25f, gSubImageY*0.25f+UV0.y*0.25f);
     gs_in.noiseTexCoord1 = vec2(gSubImageXN*0.25f+UV0.x*0.25f, gSubImageYN*0.25f+UV0.y*0.25f);

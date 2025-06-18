@@ -10,7 +10,7 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 float getGlow(in float dist, float size) {
-    return pow(size/(50.0*dist), 1.2);
+    return pow(size/(50.0*dist), 1.0);
 }
 
 float sdBox(in vec3 p, in vec3 b) {
@@ -57,7 +57,11 @@ float raymarch(in vec3 ro, in vec3 rd, in int i, in float depth, out float distT
 
         stepDistance = sdBox(ro + rd * distTraveled, dims);
 
-        glow += getGlow(stepDistance, size);
+        float newGlow = getGlow(stepDistance, size);
+
+        glow += newGlow;
+
+        if (newGlow <= 0.001 && j != 0) break;
 
         if(stepDistance <= 1e-5 || glow >= 3) break;
 

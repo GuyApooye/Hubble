@@ -18,7 +18,7 @@ public class HubbleReentryInspector extends SingleWindowInspector {
     private float velocity = 1.0f;
     private float increment = 0.25f;
     private float taperSize = 0.5f;
-    private float bowShockOffset = 1.0f;
+    private float bowShockOffset = 0.5f;
     private float bowShockColorLerpOffset = 0.5f;
 
 
@@ -119,7 +119,7 @@ public class HubbleReentryInspector extends SingleWindowInspector {
     private void renderBowShockComponents() {
 
         float[] newBowShockOffset = new float[]{bowShockOffset};
-        float[] newBowShockColorLerpOffset = new float[]{bowShockOffset};
+        float[] newBowShockColorLerpOffset = new float[]{bowShockColorLerpOffset};
         float[] newBowShockColor = new float[]{bowShockColor.x, bowShockColor.y, bowShockColor.z, bowShockColor.w};
 
         ImGui.text("Bow Shock Offset");

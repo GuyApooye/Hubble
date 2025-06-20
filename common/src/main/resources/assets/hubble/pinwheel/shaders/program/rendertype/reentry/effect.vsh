@@ -27,8 +27,9 @@ out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
 out GS_INPUT {
-//    vec3 worldPosition;
     vec3 normal;
+    vec3 localNormal;
+    vec3 viewDir;
     vec2 noiseTexCoord0;
     vec2 noiseTexCoord1;
 } gs_in;
@@ -40,8 +41,12 @@ void main() {
     vertexDistance = fog_distance(pos, FogShape);
     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
     texCoord0 = UV0;
-//    gs_in.worldPosition = Normal;
     gs_in.normal = Normal;
+    //just in case this needs to be replaced when we get access to sable.
+    //also idk what its supposed to do...
+    gs_in.localNormal = Normal;
+    //:cry:
+    gs_in.viewDir = Normal;
     gs_in.noiseTexCoord0 = vec2(gSubImageX*0.25f+UV0.x*0.25f, gSubImageY*0.25f+UV0.y*0.25f);
     gs_in.noiseTexCoord1 = vec2(gSubImageXN*0.25f+UV0.x*0.25f, gSubImageYN*0.25f+UV0.y*0.25f);
 }

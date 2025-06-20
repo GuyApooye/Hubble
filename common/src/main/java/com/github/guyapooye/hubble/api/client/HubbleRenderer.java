@@ -71,6 +71,8 @@ public final class HubbleRenderer implements NativeResource {
             player.hubble$roll(0.02f);
         }
 
+        reentryManager.tick();
+
         objectsToRender.clear();
         planetData.clear();
         atmosphereData.clear();
@@ -150,6 +152,7 @@ public final class HubbleRenderer implements NativeResource {
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.ATMOSPHERE_DATA.get());
         VeilRenderSystem.unbind(HubbleShaderBufferRegistry.LIGHT_DATA.get());
         objectsToRender.clear();
+        reentryManager.free();
     }
 
     public PlanetData getPlanetData() {

@@ -41,8 +41,9 @@ in float vertexDistance[3];
 in vec4 vertexColor[3];
 in vec2 texCoord0[3];
 in GS_INPUT {
-//    vec3 worldPosition;
     vec3 normal;
+    vec3 localNormal;
+    vec3 viewDir;
     vec2 noiseTexCoord0;
     vec2 noiseTexCoord1;
 } gs_in[3];
@@ -76,8 +77,10 @@ float getNoiseLength(vec2 tc, vec2 tcN)
     return lerp(lengthVarNext, lengthVar, gNoiseLerp);
 }
 
-void createVertex(vec4 pos, vec4 color) {
-    gl_Position = ProjMat * ModelViewMat * pos;
+void createVertex(vec3 pos, vec4 color) {
+    gl_Position.xyz = pos;
+    gl_Position.w = 1.0;
+    gl_Position = ProjMat * ModelViewMat * gl_Position;
     fVertexColor = color;
     EmitVertex();
 }
@@ -86,7 +89,7 @@ void main() {
 
     float lengthGeneral = Velocity*gVelMultiplier;
     vec3 lengthVar = vec3(lengthGeneral);
-    for(int i = 0; i < 3; i++) lengthVar[i] += getNoiseLength(gs_in[i].noiseTexCoord0, gs_in[i].noiseTexCoord1) * lengthGeneral*Length;
+    for(int i = 0; i < 3; i++) lengthVar[i] += getNoiseLength(gs_in[i].noiseTexCoord0, gs_in[i].noiseTexCoord1) * lengthGeneral * Length;
 
 
     //movement "Shadow" occlusion
@@ -105,7 +108,7 @@ void main() {
     vec4 col3 = TrailColor*strength*Strength;
 
     float curve = Increment*1.5;
-    vec3 nMove = normalize(Direction);
+    vec3 nMove = Direction;
 
     for(int i = 0; i < 3; i++) {
 
@@ -116,29 +119,29 @@ void main() {
 
             int j = (i + 1) % 3;
 
-//            vec3 nCenter = normalize(gs_in[i].worldPosition);
-            vec3 nSize = normalize(cross(nMove, normal));
+            vec3 nCenter = normalize(gs_in[i].viewDir);
+            vec3 nSize = normalize(cross(nMove, nCenter));
 
             velDot = pow(1.0 - velDot, 3.0);//assuming velDot larger 0
 
             vec3 length_i = lengthVar[i] * velDot * nMove;
             vec3 length_j = lengthVar[j] * velDot * nMove;
 
-            vec3 outward = -cross(nMove, normal) * Increment * lengthVar[i] * velDot;
+            vec3 outward = -cross(nMove, nSize) * Increment * lengthVar[i] * velDot;
             vec3 sizeEnd = nSize * TaperSize;
             vec3 sizeTop = nSize * lerp(1.0, TaperSize, Increment);
 
-            vec4 end_j = vec4(sizeEnd + length_j + (outward), 0.0);
-            vec4 end_i = vec4(-sizeEnd + length_i + (outward), 0.0);
-            vec4 top_j = vec4(sizeTop + length_j * Increment + (outward * curve), 0.0);
-            vec4 top_i = vec4(-sizeTop + length_i * Increment + (outward * curve), 0.0);
+            vec3 end_j = sizeEnd + length_j + (outward);
+            vec3 end_i = -sizeEnd + length_i + (outward);
+            vec3 top_j = sizeTop + length_j * Increment + (outward * curve);
+            vec3 top_i = -sizeTop + length_i * Increment + (outward * curve);
             //Create Geometry (Trianglestrip) alternating between this and its adjacent edge
-            createVertex(gl_in[i].gl_Position, col1);
-            createVertex(gl_in[j].gl_Position, col1);
-            createVertex(gl_in[i].gl_Position + top_i, col2);
-            createVertex(gl_in[j].gl_Position + top_j, col2);
-            createVertex(gl_in[i].gl_Position + end_i, col3);
-            createVertex(gl_in[j].gl_Position + end_j, col3);
+            createVertex(gl_in[i].gl_Position.xyz, col1);
+            createVertex(gl_in[j].gl_Position.xyz, col1);
+            createVertex(gl_in[i].gl_Position.xyz + top_i, col2);
+            createVertex(gl_in[j].gl_Position.xyz + top_j, col2);
+            createVertex(gl_in[i].gl_Position.xyz + end_i, col3);
+            createVertex(gl_in[j].gl_Position.xyz + end_j, col3);
             EndPrimitive();
         }
     }

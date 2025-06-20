@@ -1,4 +1,4 @@
-package com.github.guyapooye.hubble.client.shader.preprocessor;
+package com.github.guyapooye.hubble.client.render.shader.preprocessor;
 
 import foundry.veil.api.client.render.shader.processor.ShaderPreProcessor;
 import io.github.ocelot.glslprocessor.api.node.GlslTree;

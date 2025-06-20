@@ -1,5 +1,6 @@
 {
   "editor.hubble.inspector.object.title": "Hubble Object Editor",
+  "editor.hubble.inspector.reentry.title": "Hubble Reentry Editor",
   "key.hubble.roll": "Roll",
   "key.hubble.inverse_roll": "Roll Other Way",
   "category.hubble.main": "Hubble"

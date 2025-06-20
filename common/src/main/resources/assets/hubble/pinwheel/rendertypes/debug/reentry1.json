@@ -1,0 +1,27 @@
+{
+  "format": "BLOCK",
+  "mode": "QUADS",
+  "bufferSize": "SMALL",
+  "sort": true,
+  "affectsCrumbling": true,
+  "outline": false,
+  "layers": [
+    {
+      "type": "veil:shader",
+      "name": "hubble:rendertype/reentry/pass_1"
+    },
+    {
+      "type": "minecraft:cull",
+      "face": "none"
+    },
+    {
+      "type": "minecraft:depth_test",
+      "mode": "lequal"
+    },
+    {
+      "type": "minecraft:write_mask",
+      "color": true,
+      "depth": true
+    }
+  ]
+}

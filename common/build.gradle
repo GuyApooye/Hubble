@@ -3,7 +3,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/hubble-common.accesswidener")
+    accessWidenerPath = file("src/main/resources/hubble.accesswidener")
 }
 
 dependencies {

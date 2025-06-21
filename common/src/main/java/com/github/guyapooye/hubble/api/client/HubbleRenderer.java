@@ -43,7 +43,7 @@ public final class HubbleRenderer implements NativeResource {
     @ApiStatus.Internal
     public static void bootstrap() {
         VeilEventPlatform.INSTANCE.onVeilRenderLevelStage((stage, levelRenderer, bufferSource, matrixStack, matrix4fc, matrix4fc1, i, deltaTracker, camera, frustum) -> {
-            if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+            if (stage == VeilRenderLevelStageEvent.Stage.AFTER_SKY) {
                 if (HubbleUtil.shouldExecuteSpace(minecraft.level.dimension())) {
                     HubbleRenderer renderer = HubbleRenderer.getInstance();
 

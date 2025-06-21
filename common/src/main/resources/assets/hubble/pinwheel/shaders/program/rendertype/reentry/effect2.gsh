@@ -8,6 +8,7 @@ uniform sampler2D NoiseSampler;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform mat3 NormalMat;
+uniform vec3 ChunkOffset;
 uniform vec3 Direction;
 uniform float Length;
 uniform float Velocity;
@@ -91,7 +92,7 @@ void createVertex(vec3 pos, vec4 color) {
 }
 
 void createVertex(vec3 pos, vec4 color, float alpha) {
-    gl_Position.xyz = pos;
+    gl_Position.xyz = pos + ChunkOffset;
     gl_Position.w = 1.0;
     gl_Position = ProjMat * ModelViewMat * gl_Position;
     fVertexColor = color;
@@ -133,14 +134,14 @@ void main() {
 
     // Sample noise
     vec3 noise = vec3(0.0);
-    for (i = 0; i < 3; i++) noise[i] = /**getNoiseLength(gl_in[i].gl_Position.xy + gs_in[i].noiseTexCoord0, 1) * */baseLength/** * getNoiseLength(gl_in[i].gl_Position.xy + gs_in[i].noiseTexCoord0, 2)*//** * 10.0*/;
+    for (i = 0; i < 3; i++) noise[i] = getNoiseLength(gl_in[i].gl_Position.xy , 1) * baseLength * getNoiseLength(gl_in[i].gl_Position.yz, 2)/** * 10.0*/;
 
     // Calculate the outward effect length
     vec3 effectLength = (baseLength + noise * 0.3) * scaledEntrySpeed * 1.5;
-    vec3 middleLength = effectLength * 0.54;
+    vec3 middleLength = effectLength * 1.5 /** * 0.54*/;
 
     // Calculate the forward effect length
-    vec3 effectSideLength = (3 + noise) * scaledEntrySpeed * 0.9;
+    vec3 effectSideLength = (3 + noise) * scaledEntrySpeed * 1.25;
     vec3 middleSideLength = effectSideLength * 0.45;
 
     // Offset the bowshock away from the ship

@@ -8,6 +8,7 @@ uniform sampler2D NoiseSampler;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform mat3 NormalMat;
+uniform vec3 ChunkOffset;
 uniform vec3 Direction;
 uniform float Length;
 uniform float Velocity;
@@ -78,7 +79,7 @@ float getNoiseLength(vec2 tc, vec2 tcN)
 }
 
 void createVertex(vec3 pos, vec4 color) {
-    gl_Position.xyz = pos;
+    gl_Position.xyz = pos + ChunkOffset;
     gl_Position.w = 1.0;
     gl_Position = ProjMat * ModelViewMat * gl_Position;
     fVertexColor = color;
@@ -89,7 +90,7 @@ void main() {
 
     float lengthGeneral = Velocity*gVelMultiplier;
     vec3 lengthVar = vec3(lengthGeneral);
-    for(int i = 0; i < 3; i++) lengthVar[i] += getNoiseLength(gs_in[i].noiseTexCoord0, gs_in[i].noiseTexCoord1) * lengthGeneral * Length;
+    for(int i = 0; i < 3; i++) lengthVar[i] += getNoiseLength(gl_in[i].gl_Position.xy * 0.125, gl_in[i].gl_Position.yz * 0.125) * lengthGeneral * Length;
 
 
     //movement "Shadow" occlusion

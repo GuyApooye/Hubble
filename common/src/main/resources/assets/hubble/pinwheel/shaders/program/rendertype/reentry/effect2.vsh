@@ -35,7 +35,7 @@ out GS_INPUT {
 } gs_in;
 
 void main() {
-    vec3 pos = Position + ChunkOffset;
+    vec3 pos = Position;
     gl_Position = vec4(pos,1.0);
 
     vertexDistance = fog_distance(pos, FogShape);

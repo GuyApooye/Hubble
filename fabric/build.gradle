@@ -32,7 +32,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
 //    modImplementation("net.fabricmc:fabric-language-kotlin:${kotlin_fabric_version}")
-    modCompileOnlyApi("org.valkyrienskies:valkyrienskies-1-21-1-fabric:$vs2_version")/* { transitive = false }*/
+//    modCompileOnlyApi("org.valkyrienskies:valkyrienskies-1-21-1-fabric:$vs2_version")/* { transitive = false }*/
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')

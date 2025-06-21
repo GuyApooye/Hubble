@@ -28,10 +28,10 @@ subprojects {
 
         mavenCentral()
 
-        maven {
-            name = "Valkyrien Skies Internal"
-            url = 'https://maven.valkyrienskies.org'
-        }
+//        maven {
+//            name = "Valkyrien Skies Internal"
+//            url = 'https://maven.valkyrienskies.org'
+//        }
 
         maven {
             name = 'BlameJared Maven (CrT / Bookshelf)'
@@ -51,10 +51,10 @@ subprojects {
 
         implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-        implementation("org.valkyrienskies.core:api:$vs_core_version") { transitive = false }
-        implementation("org.valkyrienskies.core:api-game:$vs_core_version") { transitive = false }
-        implementation("org.valkyrienskies.core:util:$vs_core_version") { transitive = false }
-        implementation("org.valkyrienskies.core:impl:$vs_core_version") { transitive = false }
+//        implementation("org.valkyrienskies.core:api:$vs_core_version") { transitive = false }
+//        implementation("org.valkyrienskies.core:api-game:$vs_core_version") { transitive = false }
+//        implementation("org.valkyrienskies.core:util:$vs_core_version") { transitive = false }
+//        implementation("org.valkyrienskies.core:impl:$vs_core_version") { transitive = false }
 
 //        implementation "io.github.ocelot:glsl-processor:${glsl_processor_version}"
     }
